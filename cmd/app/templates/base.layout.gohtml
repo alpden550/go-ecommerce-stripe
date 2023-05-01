@@ -16,7 +16,11 @@
         </title>
     </head>
     <body>
+
     <div class="container">
+
+        {{template "nav" .}}
+
         <div class="row">
             <div class="col">
                 {{block "content" .}} {{end}}
@@ -35,6 +39,5 @@
     </body>
 
     </html>
-
 
 {{end}}
