@@ -9,6 +9,11 @@ import (
 func (app *application) routes() http.Handler {
 	mux := chi.NewRouter()
 
+	fileServer := http.FileServer(http.Dir("./static"))
+	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
+
+	mux.Get("/charge-once", app.ChargeOnce)
+
 	mux.Get("/virtual-terminal", app.VirtualTerminal)
 	mux.Post("/payment-succeeded", app.PaymentSucceed)
 
