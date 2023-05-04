@@ -1,15 +1,14 @@
 package main
 
 import (
+	"github.com/go-chi/chi/v5"
 	"net/http"
+	"strconv"
 )
 
 func (app *application) VirtualTerminal(w http.ResponseWriter, r *http.Request) {
-	stripeData := map[string]interface{}{
-		"key": app.config.stripe.key,
-	}
 	if err := app.renderTemplate(
-		w, r, "terminal", &templateData{Data: stripeData}, "stripe-js", "nav",
+		w, r, "terminal", &templateData{}, "stripe-js", "nav",
 	); err != nil {
 		app.errorLog.Println(err)
 	}
@@ -40,11 +39,24 @@ func (app *application) PaymentSucceed(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *application) ChargeOnce(w http.ResponseWriter, r *http.Request) {
-	stripeData := map[string]interface{}{
-		"key": app.config.stripe.key,
+	id := chi.URLParam(r, "id")
+	widgetID, err := strconv.Atoi(id)
+	if err != nil {
+		app.errorLog.Printf("%e", err)
+		return
 	}
+	widget, err := app.DB.GetWidget(widgetID)
+	if err != nil {
+		app.errorLog.Printf("%e", err)
+		return
+	}
+
+	data := map[string]interface{}{
+		"widget": widget,
+	}
+
 	if err := app.renderTemplate(
-		w, r, "buy-once", &templateData{Data: stripeData}, "stripe-js", "nav",
+		w, r, "buy-once", &templateData{Data: data}, "stripe-js", "nav",
 	); err != nil {
 		app.errorLog.Printf("%e", err)
 	}
