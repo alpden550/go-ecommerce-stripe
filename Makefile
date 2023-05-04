@@ -1,6 +1,5 @@
 GOSTRIPE_PORT=4000
 API_PORT=4001
-DSN=root@tcp(localhost:3306)/widgets?parseTime=true&tls=false
 
 ## build: builds all binaries
 build: clean build_front build_back
@@ -55,3 +54,12 @@ stop_back:
 	@echo "Stopping the back end..."
 	@-pkill -SIGTERM -f "gostripe_api -port=${API_PORT}"
 	@echo "Stopped back end"
+
+db:
+	docker-compose up db
+
+air_api:
+	air -c .air-api.toml
+
+air_app:
+	air -c .air-app.toml
