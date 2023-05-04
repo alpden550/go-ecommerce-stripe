@@ -2,6 +2,7 @@ package cards
 
 import (
 	"errors"
+
 	"github.com/stripe/stripe-go/v74"
 	"github.com/stripe/stripe-go/v74/paymentintent"
 )
