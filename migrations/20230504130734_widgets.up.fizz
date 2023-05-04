@@ -1,0 +1,13 @@
+create_table("widget") {
+  t.Column("id", "int", {primary: true})
+  t.Column("name", "string", {})
+  t.Column("description", "text", {"null": true})
+  t.Column("image", "string", {"null": true})
+  t.Column("inventory_level", "int", {})
+  t.Column("price", "int", {})
+  t.Column("created_at", "timestamp", {})
+  t.Column("updated_at", "timestamp", {})
+}
+
+sql("alter table widgets alter column created_at set default now();")
+sql("alter table widgets alter column updated_at set default now();")
