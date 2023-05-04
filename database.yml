@@ -1,0 +1,8 @@
+development:
+  dialect: postgres
+  database: postgres
+  user: postgres
+  password: password
+  port: 5433
+  host: 0.0.0.0
+  pool: 5
