@@ -11,6 +11,7 @@ require (
 )
 
 require (
+	github.com/alexedwards/scs/v2 v2.5.1 // indirect
 	github.com/stretchr/testify v1.8.1 // indirect
 	golang.org/x/net v0.0.0-20221002022538-bcab6841153b // indirect
 )
