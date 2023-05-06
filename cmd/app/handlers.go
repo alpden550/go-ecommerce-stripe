@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/go-chi/chi/v5"
+	"go-ecommerce/internal/cards"
 	"net/http"
 	"strconv"
 )
@@ -22,14 +23,33 @@ func (app *application) PaymentSucceed(w http.ResponseWriter, r *http.Request) {
 	}
 
 	form := r.Form
+	card := cards.Card{
+		Secret: app.config.stripe.secret,
+		Key:    app.config.stripe.key,
+	}
+
+	pi, err := card.GetPaymentIntent(form.Get("payment_intent"))
+	if err != nil {
+		app.errorLog.Printf("%e", err)
+		return
+	}
+	pm, err := card.GetPaymentMethod(form.Get("payment_method"))
+	if err != nil {
+		app.errorLog.Printf("%e", err)
+		return
+	}
 
 	paymentData := map[string]interface{}{
-		"cardholder": form.Get("cardholder_name"),
-		"email":      form.Get("cardholder_email"),
-		"intent":     form.Get("payment_intent"),
-		"method":     form.Get("payment_method"),
-		"amount":     form.Get("payment_amount"),
-		"currency":   form.Get("payment_currency"),
+		"cardholder":       form.Get("cardholder_name"),
+		"email":            form.Get("cardholder_email"),
+		"intent":           form.Get("payment_intent"),
+		"method":           form.Get("payment_method"),
+		"amount":           form.Get("payment_amount"),
+		"currency":         form.Get("payment_currency"),
+		"last_four":        pm.Card.Last4,
+		"expire_month":     pm.Card.ExpMonth,
+		"expire_year":      pm.Card.ExpYear,
+		"latest_charge_id": pi.LatestCharge.ID,
 	}
 
 	if err := app.renderTemplate(w, r, "succeeded", &templateData{Data: paymentData}, "nav"); err != nil {
