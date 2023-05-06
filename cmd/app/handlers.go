@@ -7,6 +7,14 @@ import (
 	"strconv"
 )
 
+func (app *application) IndexPage(w http.ResponseWriter, r *http.Request) {
+	if err := app.renderTemplate(
+		w, r, "index", &templateData{}, "nav",
+	); err != nil {
+		app.errorLog.Println(err)
+	}
+}
+
 func (app *application) VirtualTerminal(w http.ResponseWriter, r *http.Request) {
 	if err := app.renderTemplate(
 		w, r, "terminal", &templateData{}, "stripe-js", "nav",
