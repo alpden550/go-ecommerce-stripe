@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/gob"
 	"flag"
 	"fmt"
 	"github.com/alexedwards/scs/v2"
@@ -64,6 +65,7 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
+	gob.Register(TransactionData{})
 	var cfg config
 	session = scs.New()
 	session.Lifetime = 24 * time.Hour
