@@ -1,7 +1,6 @@
 package models
 
 import (
-	"context"
 	"time"
 )
 
@@ -25,24 +24,20 @@ type Order struct {
 }
 
 func (m *DBModel) InsertOrder(order Order) (int, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
+	var id int
 
 	query := `
-		INSERT INTO orders (widget_id, transaction_id, status_id, quantity, amount)
-		VALUES ($1, $2, $3, $4, $5)
+		INSERT INTO orders (widget_id, transaction_id, customer_id, status_id, quantity, amount)
+		VALUES ($1, $2, $3, $4, $5, $6)
+		RETURNING id
 	`
 
-	res, err := m.DB.ExecContext(
-		ctx, query, order.WidgetID, order.TransactionID, order.StatusID, order.Quantity, order.Amount,
-	)
+	err := m.DB.QueryRow(
+		query, order.WidgetID, order.TransactionID, order.CustomerID, order.StatusID, order.Quantity, order.Amount,
+	).Scan(&id)
 	if err != nil {
 		return 0, err
 	}
 
-	id, err := res.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
-	return int(id), nil
+	return id, nil
 }
