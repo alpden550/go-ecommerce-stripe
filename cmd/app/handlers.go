@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/go-chi/chi/v5"
-	"go-ecommerce/internal/cards"
+	"go-ecommerce/internal/models"
 	"net/http"
 	"strconv"
 )
@@ -23,6 +23,30 @@ func (app *application) VirtualTerminal(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
+func (app *application) ShowReceipt(w http.ResponseWriter, r *http.Request) {
+	payment := app.Session.Get(r.Context(), "receipt").(TransactionData)
+	paymentData := map[string]interface{}{
+		"paymentData": payment,
+	}
+	app.Session.Remove(r.Context(), "receipt")
+	if err := app.renderTemplate(w, r, "receipt", &templateData{Data: paymentData}, "nav"); err != nil {
+		app.errorLog.Printf("%e", err)
+		return
+	}
+}
+
+func (app *application) VirtualTerminalShowReceipt(w http.ResponseWriter, r *http.Request) {
+	payment := app.Session.Get(r.Context(), "virtual-terminal-receipt").(TransactionData)
+	paymentData := map[string]interface{}{
+		"paymentData": payment,
+	}
+	app.Session.Remove(r.Context(), "receipt")
+	if err := app.renderTemplate(w, r, "receipt", &templateData{Data: paymentData}, "nav"); err != nil {
+		app.errorLog.Printf("%e", err)
+		return
+	}
+}
+
 func (app *application) PaymentSucceed(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
@@ -31,39 +55,112 @@ func (app *application) PaymentSucceed(w http.ResponseWriter, r *http.Request) {
 	}
 
 	form := r.Form
-	card := cards.Card{
-		Secret: app.config.stripe.secret,
-		Key:    app.config.stripe.key,
-	}
-
-	pi, err := card.GetPaymentIntent(form.Get("payment_intent"))
-	if err != nil {
-		app.errorLog.Printf("%e", err)
-		return
-	}
-	pm, err := card.GetPaymentMethod(form.Get("payment_method"))
+	widgetID, _ := strconv.Atoi(form.Get("product_id"))
+	transactionData, err := app.GetTransactionData(r)
 	if err != nil {
 		app.errorLog.Printf("%e", err)
 		return
 	}
 
-	paymentData := map[string]interface{}{
-		"cardholder":       form.Get("cardholder_name"),
-		"email":            form.Get("cardholder_email"),
-		"intent":           form.Get("payment_intent"),
-		"method":           form.Get("payment_method"),
-		"amount":           form.Get("payment_amount"),
-		"currency":         form.Get("payment_currency"),
-		"last_four":        pm.Card.Last4,
-		"expire_month":     pm.Card.ExpMonth,
-		"expire_year":      pm.Card.ExpYear,
-		"latest_charge_id": pi.LatestCharge.ID,
-	}
-
-	if err := app.renderTemplate(w, r, "succeeded", &templateData{Data: paymentData}, "nav"); err != nil {
+	customerID, err := app.SaveCustomer(transactionData.FirstName, transactionData.LastName, transactionData.Email)
+	if err != nil {
 		app.errorLog.Printf("%e", err)
 		return
 	}
+
+	transaction := models.Transaction{
+		Amount:              transactionData.Amount,
+		Currency:            transactionData.Currency,
+		LastFour:            transactionData.LastFour,
+		ExpireMonth:         transactionData.ExpireMonth,
+		ExpireYear:          transactionData.ExpireYear,
+		BankReturnCode:      transactionData.BankReturnCode,
+		PaymentMethodCode:   transactionData.PaymentMethodCode,
+		PaymentIntentCode:   transactionData.PaymentIntentCode,
+		TransactionStatusID: 2,
+	}
+
+	transactionID, err := app.SaveTransaction(transaction)
+	if err != nil {
+		app.errorLog.Printf("%e", err)
+		return
+	}
+
+	order := models.Order{
+		WidgetID:      widgetID,
+		TransactionID: transactionID,
+		CustomerID:    customerID,
+		StatusID:      1,
+		Quantity:      1,
+		Amount:        transactionData.Amount,
+	}
+	_, err = app.SaveOrder(order)
+	if err != nil {
+		app.errorLog.Printf("%e", err)
+		return
+	}
+
+	app.Session.Put(r.Context(), "receipt", transactionData)
+	http.Redirect(w, r, "/receipt", http.StatusSeeOther)
+}
+
+func (app *application) VirtualTerminalPaymentSucceed(w http.ResponseWriter, r *http.Request) {
+	transactionData, err := app.GetTransactionData(r)
+	if err != nil {
+		app.errorLog.Printf("%e", err)
+		return
+	}
+
+	transaction := models.Transaction{
+		Amount:              transactionData.Amount,
+		Currency:            transactionData.Currency,
+		LastFour:            transactionData.LastFour,
+		ExpireMonth:         transactionData.ExpireMonth,
+		ExpireYear:          transactionData.ExpireYear,
+		BankReturnCode:      transactionData.BankReturnCode,
+		PaymentMethodCode:   transactionData.PaymentMethodCode,
+		PaymentIntentCode:   transactionData.PaymentIntentCode,
+		TransactionStatusID: 2,
+	}
+
+	_, err = app.SaveTransaction(transaction)
+	if err != nil {
+		app.errorLog.Printf("%e", err)
+		return
+	}
+
+	app.Session.Put(r.Context(), "virtual-terminal-receipt", transactionData)
+	http.Redirect(w, r, "/virtual-terminal-receipt", http.StatusSeeOther)
+}
+
+func (app *application) SaveCustomer(firstName, lastName, email string) (int, error) {
+	customer := models.Customer{
+		FirstName: firstName,
+		LastName:  lastName,
+		Email:     email,
+	}
+
+	id, err := app.DB.InsertCustomer(customer)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
+}
+
+func (app *application) SaveTransaction(transaction models.Transaction) (int, error) {
+	id, err := app.DB.InsertTransaction(transaction)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
+}
+
+func (app *application) SaveOrder(order models.Order) (int, error) {
+	id, err := app.DB.InsertOrder(order)
+	if err != nil {
+		return 0, err
+	}
+	return id, nil
 }
 
 func (app *application) ChargeOnce(w http.ResponseWriter, r *http.Request) {
