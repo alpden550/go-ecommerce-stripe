@@ -23,5 +23,8 @@ func (app *application) routes() http.Handler {
 	mux.Post("/payment-succeeded", app.PaymentSucceed)
 	mux.Get("/receipt", app.ShowReceipt)
 
+	mux.Get("/plans/bronze", app.BronzePlan)
+	mux.Get("/receipt/bronze", app.BronzePlanShowReceipt)
+
 	return mux
 }
