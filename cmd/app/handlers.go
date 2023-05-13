@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/go-chi/chi/v5"
 	"go-ecommerce/internal/models"
 	"net/http"
@@ -184,5 +185,25 @@ func (app *application) ChargeOnce(w http.ResponseWriter, r *http.Request) {
 		w, r, "buy-once", &templateData{Data: data}, "stripe-js", "nav",
 	); err != nil {
 		app.errorLog.Printf("%e", err)
+	}
+}
+
+func (app *application) BronzePlan(w http.ResponseWriter, r *http.Request) {
+	sbcr, err := app.DB.GetSubscriptionByName("Bronze Plan")
+	if err != nil {
+		app.errorLog.Printf("%e", fmt.Errorf("%w", err))
+		return
+	}
+	data := map[string]interface{}{
+		"subscription": sbcr,
+	}
+	if err := app.renderTemplate(w, r, "bronze-plan", &templateData{Data: data}, "nav"); err != nil {
+		app.errorLog.Printf("%e", fmt.Errorf("%w", err))
+	}
+}
+
+func (app *application) BronzePlanShowReceipt(w http.ResponseWriter, r *http.Request) {
+	if err := app.renderTemplate(w, r, "bronze-plan-receipt", &templateData{}, "nav"); err != nil {
+		app.errorLog.Printf("%e", fmt.Errorf("%w", err))
 	}
 }
