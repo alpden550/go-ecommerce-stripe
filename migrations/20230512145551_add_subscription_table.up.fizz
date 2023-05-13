@@ -1,0 +1,14 @@
+create_table("subscriptions") {
+    t.Column("id", "integer", {primary: true})
+    t.Column("name", "string", {"default": ""})
+    t.Column("description", "text", {"default": ""})
+    t.Column("inventory_level", "integer", {})
+    t.Column("price", "integer", {})
+    t.Column("is_recurring", "bool", {"default": 0})
+    t.Column("plan_id", "string", {"default": ""})
+}
+
+sql("alter table widgets alter column created_at set default now();")
+sql("alter table widgets alter column updated_at set default now();")
+
+sql("insert into subscriptions (name, description, inventory_level, price, created_at, updated_at) values ('Bronze Plan', 'Get three widgets for the price of two.', 10000, 2000, now(), now());")
