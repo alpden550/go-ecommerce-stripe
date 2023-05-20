@@ -1,7 +1,8 @@
-package handlers
+package helpers
 
 import (
 	"go-ecommerce/internal/cards"
+	"go-ecommerce/internal/configs"
 	"net/http"
 	"strconv"
 )
@@ -20,15 +21,15 @@ type TransactionData struct {
 	ExpireYear        int
 }
 
-func GetTransactionData(r *http.Request) (TransactionData, error) {
+func GetTransactionData(app *configs.AppConfig, request *http.Request) (TransactionData, error) {
 	var transactionData TransactionData
-	err := r.ParseForm()
+	err := request.ParseForm()
 	if err != nil {
 		app.ErrorLog.Printf("%e", err)
 		return transactionData, err
 	}
 
-	form := r.Form
+	form := request.Form
 	amount, _ := strconv.Atoi(form.Get("payment_amount"))
 	card := cards.Card{
 		Secret: app.Config.Stripe.Secret,

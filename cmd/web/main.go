@@ -9,7 +9,8 @@ import (
 	"github.com/joho/godotenv"
 	"go-ecommerce/internal/configs"
 	"go-ecommerce/internal/driver"
-	handlers2 "go-ecommerce/internal/handlers"
+	"go-ecommerce/internal/handlers"
+	"go-ecommerce/internal/helpers"
 	"go-ecommerce/internal/models"
 	"go-ecommerce/internal/renders"
 	"html/template"
@@ -32,7 +33,7 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	gob.Register(handlers2.TransactionData{})
+	gob.Register(helpers.TransactionData{})
 
 	flag.IntVar(&config.Port, "port", 4000, "Server port to listen on")
 	flag.StringVar(&config.Env, "env", "development", "Application environment {development|production}")
@@ -80,7 +81,7 @@ func prepare() (*sql.DB, error) {
 	}
 
 	renders.SetAppToRender(app)
-	handlers2.SetAppToHandlers(app)
+	handlers.SetAppToHandlers(app)
 
 	return conn, nil
 }

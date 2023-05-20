@@ -17,7 +17,7 @@ func VirtualTerminal(writer http.ResponseWriter, request *http.Request) {
 }
 
 func VirtualTerminalPaymentSucceed(writer http.ResponseWriter, request *http.Request) {
-	transactionData, err := GetTransactionData(request)
+	transactionData, err := helpers.GetTransactionData(app, request)
 	if err != nil {
 		app.ErrorLog.Printf("%e", err)
 		return
@@ -46,14 +46,14 @@ func VirtualTerminalPaymentSucceed(writer http.ResponseWriter, request *http.Req
 }
 
 func VirtualTerminalShowReceipt(writer http.ResponseWriter, request *http.Request) {
-	payment, ok := app.Session.Get(request.Context(), "virtual-terminal-receipt").(TransactionData)
+	payment, ok := app.Session.Get(request.Context(), "virtual-terminal-receipt").(helpers.TransactionData)
 	if !ok {
 		http.Redirect(writer, request, "/", http.StatusSeeOther)
 	}
 	paymentData := map[string]interface{}{
 		"paymentData": payment,
 	}
-	app.Session.Remove(request.Context(), "receipt")
+	app.Session.Remove(request.Context(), "virtual-terminal-receipt")
 	if err := renders.RenderTemplate(
 		writer, request, "receipt", &renders.TemplateData{Data: paymentData}, "nav",
 	); err != nil {

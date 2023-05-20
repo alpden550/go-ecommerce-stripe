@@ -43,7 +43,7 @@ func WidgetPaymentSucceed(writer http.ResponseWriter, request *http.Request) {
 
 	form := request.Form
 	widgetID, _ := strconv.Atoi(form.Get("product_id"))
-	transactionData, err := GetTransactionData(request)
+	transactionData, err := helpers.GetTransactionData(app, request)
 	if err != nil {
 		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 		return
@@ -92,7 +92,7 @@ func WidgetPaymentSucceed(writer http.ResponseWriter, request *http.Request) {
 }
 
 func WidgetShowReceipt(writer http.ResponseWriter, request *http.Request) {
-	payment, ok := app.Session.Get(request.Context(), "receipt").(TransactionData)
+	payment, ok := app.Session.Get(request.Context(), "receipt").(helpers.TransactionData)
 	if !ok {
 		http.Redirect(writer, request, "/", http.StatusSeeOther)
 	}
