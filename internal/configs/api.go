@@ -12,3 +12,7 @@ type ApiApplication struct {
 	Version  string
 	DB       models.DBModel
 }
+
+func (api *ApiApplication) GetDB() models.DBModel {
+	return api.DB
+}

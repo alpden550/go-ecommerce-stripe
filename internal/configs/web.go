@@ -16,3 +16,7 @@ type AppConfig struct {
 	DB            models.DBModel
 	Session       *scs.SessionManager
 }
+
+func (app *AppConfig) GetDB() models.DBModel {
+	return app.DB
+}
