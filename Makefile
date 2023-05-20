@@ -15,7 +15,7 @@ clean:
 ## build_front: builds the front end
 build_front:
 	@echo "Building front end..."
-	@go build -o dist/gostripe ./cmd/app
+	@go build -o dist/gostripe ./cmd/web
 	@echo "Front end built!"
 
 ## build_back: builds the back end
@@ -25,22 +25,22 @@ build_back:
 	@echo "Back end built!"
 
 ## start: starts front and back end
-start: start_front start_back
+start: db start_front start_back
 
 ## start_front: starts the front end
 start_front: build_front
 	@echo "Starting the front end..."
-	./dist/gostripe -port=${GOSTRIPE_PORT} -dsn="${DSN}" &
+	./dist/gostripe -port=${GOSTRIPE_PORT} &
 	@echo "Front end running!"
 
 ## start_back: starts the back end
 start_back: build_back
 	@echo "Starting the back end..."
-	./dist/gostripe_api -port=${API_PORT}  -dsn="${DSN}" &
+	./dist/gostripe_api -port=${API_PORT} &
 	@echo "Back end running!"
 
 ## stop: stops the front and back end
-stop: stop_front stop_back
+stop: stop_front stop_back stop_db
 	@echo "All applications stopped"
 
 ## stop_front: stops the front end
@@ -56,7 +56,12 @@ stop_back:
 	@echo "Stopped back end"
 
 db:
-	docker-compose up db
+	@echo "Starting the postgres..."
+	docker-compose up db -d
+
+stop_db:
+	@echo "Stopping the postgres..."
+	docker-compose stop db
 
 air_api:
 	air -c .air-api.toml
