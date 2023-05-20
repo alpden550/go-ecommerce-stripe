@@ -1,13 +1,14 @@
 package main
 
 import (
+	handlers "go-ecommerce/internal/handlers_api"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"
 )
 
-func (app *application) routes() http.Handler {
+func routes() http.Handler {
 	mux := chi.NewRouter()
 
 	mux.Use(cors.Handler(cors.Options{
@@ -18,9 +19,9 @@ func (app *application) routes() http.Handler {
 		MaxAge:           300,
 	}))
 
-	mux.Get("/api/widgets/{id}", app.GetWidgetByID)
-	mux.Post("/api/payment-intent", app.GetPaymentIntent)
-	mux.Post("/api/subscribe", app.Subscribe)
+	mux.Get("/api/widgets/{id}", handlers.GetWidgetByID)
+	mux.Post("/api/payment-intent", handlers.GetPaymentIntent)
+	mux.Post("/api/subscribe", handlers.Subscribe)
 
 	return mux
 }
