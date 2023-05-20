@@ -1,4 +1,4 @@
-package main
+package handlers
 
 import (
 	"go-ecommerce/internal/cards"
@@ -20,29 +20,29 @@ type TransactionData struct {
 	ExpireYear        int
 }
 
-func (app *application) GetTransactionData(r *http.Request) (TransactionData, error) {
+func GetTransactionData(r *http.Request) (TransactionData, error) {
 	var transactionData TransactionData
 	err := r.ParseForm()
 	if err != nil {
-		app.errorLog.Printf("%e", err)
+		app.ErrorLog.Printf("%e", err)
 		return transactionData, err
 	}
 
 	form := r.Form
 	amount, _ := strconv.Atoi(form.Get("payment_amount"))
 	card := cards.Card{
-		Secret: app.config.stripe.secret,
-		Key:    app.config.stripe.key,
+		Secret: app.Config.Stripe.Secret,
+		Key:    app.Config.Stripe.Key,
 	}
 
 	pi, err := card.GetPaymentIntent(form.Get("payment_intent"))
 	if err != nil {
-		app.errorLog.Printf("%e", err)
+		app.ErrorLog.Printf("%e", err)
 		return transactionData, err
 	}
 	pm, err := card.GetPaymentMethod(form.Get("payment_method"))
 	if err != nil {
-		app.errorLog.Printf("%e", err)
+		app.ErrorLog.Printf("%e", err)
 		return transactionData, err
 	}
 

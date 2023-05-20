@@ -169,7 +169,7 @@
                             sessionStorage.last_name = document.getElementById("last_name").value;
                             sessionStorage.amount = "{{formatAmount $subscription.Price}}";
                             sessionStorage.last_four = result.paymentMethod.card.last4;
-                            location.href = "/receipt/bronze";
+                            location.href = "/plans/bronze/receipt";
                         } else {
                             showCardError("Invalid response from payment gateway!");
                             showPayButtons();
