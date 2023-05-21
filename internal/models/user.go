@@ -22,13 +22,13 @@ func (m *DBModel) GetUserByEmail(email string) (User, error) {
 	defer cancel()
 
 	email = strings.ToLower(email)
-	query := `SELECT id, email, first_name, last_name, last_name, password  FROM users WHERE email=$1`
+	query := `SELECT id, email, password, first_name, last_name  FROM users where email=$1`
 	if err := m.DB.QueryRowContext(ctx, query, email).Scan(
 		&user.ID,
 		&user.Email,
+		&user.Password,
 		&user.FirstName,
 		&user.LastName,
-		&user.Password,
 	); err != nil {
 		return user, err
 	}
