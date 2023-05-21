@@ -4,6 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"go-ecommerce/internal/configs"
+	"go-ecommerce/internal/helpers"
 	"html/template"
 	"net/http"
 )
@@ -22,9 +23,15 @@ func SetAppToRender(a *configs.AppConfig) {
 }
 
 func AddDefaultData(td *TemplateData, r *http.Request) *TemplateData {
+	widgets, _ := helpers.FetchDbWidgets(app)
+	widgetsData := map[string]interface{}{
+		"widgets": widgets,
+	}
+
 	td.API = app.Config.Api
 	td.StripeSecret = app.Config.Stripe.Secret
 	td.StripePublishKey = app.Config.Stripe.Key
+	td.Widgets = widgetsData
 	return td
 }
 
