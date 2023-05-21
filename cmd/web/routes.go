@@ -15,6 +15,8 @@ func routes() http.Handler {
 
 	mux.Get("/", handlers.IndexPage)
 
+	mux.Get("/auth/login", handlers.Login)
+
 	mux.Get("/virtual-terminal", handlers.VirtualTerminal)
 	mux.Post("/virtual-terminal/payment-succeeded", handlers.VirtualTerminalPaymentSucceed)
 	mux.Get("/virtual-terminal/receipt", handlers.VirtualTerminalShowReceipt)
