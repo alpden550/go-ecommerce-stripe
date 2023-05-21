@@ -1,4 +1,7 @@
 {{define "nav"}}
+
+    {{$widgets := index .Widgets "widgets"}}
+
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -15,7 +18,9 @@
                             Products
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="/widgets/1">Buy one widget</a></li>
+                            {{range $v := $widgets}}
+                                <li><a class="dropdown-item" href="/widgets/{{$v.ID}}">Buy One {{$v.Name}}</a></li>
+                            {{end}}
                             <li><a class="dropdown-item" href="/plans/bronze">Subscription</a></li>
                             <li>
                                 <hr class="dropdown-divider">
