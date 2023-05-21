@@ -40,3 +40,13 @@ func SaveOrder(app configs.AppConfiger, order models.Order) (int, error) {
 
 	return id, nil
 }
+
+func FetchDbWidgets(app configs.AppConfiger) ([]models.Widget, error) {
+	db := app.GetDB()
+	widgets, err := db.GetAllWidgets()
+	if err != nil {
+		return nil, err
+	}
+
+	return widgets, nil
+}
