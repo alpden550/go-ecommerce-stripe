@@ -19,6 +19,8 @@ func routes() http.Handler {
 		MaxAge:           300,
 	}))
 
+	mux.Post("/api/auth/login", handlers.CreateAuthToken)
+
 	mux.Get("/api/widgets/{id}", handlers.GetWidgetByID)
 	mux.Post("/api/payment-intent", handlers.GetPaymentIntent)
 	mux.Post("/api/subscribe", handlers.Subscribe)
