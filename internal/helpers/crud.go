@@ -50,14 +50,3 @@ func FetchDbWidgets(app configs.AppConfiger) ([]models.Widget, error) {
 
 	return widgets, nil
 }
-
-func FetchUserByEmail(app configs.AppConfiger, email string) (models.User, error) {
-	var user models.User
-	db := app.GetDB()
-	user, err := db.GetUserByEmail(email)
-	if err != nil {
-		return user, err
-	}
-
-	return user, nil
-}
