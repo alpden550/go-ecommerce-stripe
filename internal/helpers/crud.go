@@ -50,3 +50,12 @@ func FetchDbWidgets(app configs.AppConfiger) ([]models.Widget, error) {
 
 	return widgets, nil
 }
+
+func SaveToken(app configs.AppConfiger, token *models.Token, user *models.User) error {
+	db := app.GetDB()
+	if err := db.InsertToken(token, user); err != nil {
+		return err
+	}
+
+	return nil
+}
