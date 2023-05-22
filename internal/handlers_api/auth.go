@@ -35,6 +35,11 @@ func CreateAuthToken(writer http.ResponseWriter, request *http.Request) {
 		_ = helpers.BadRequest(api, writer, request, err)
 		return
 	}
+	err = helpers.SaveToken(api, token, &user)
+	if err != nil {
+		_ = helpers.BadRequest(api, writer, request, err)
+		return
+	}
 
 	var payload struct {
 		Error   bool          `json:"error"`
