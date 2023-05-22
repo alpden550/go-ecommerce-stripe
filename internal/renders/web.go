@@ -3,8 +3,8 @@ package renders
 import (
 	"embed"
 	"fmt"
-	"go-ecommerce/internal/configs"
-	"go-ecommerce/internal/helpers"
+	"github.com/alpden550/go-ecommerce-stripe/internal/configs"
+	"github.com/alpden550/go-ecommerce-stripe/internal/helpers"
 	"html/template"
 	"net/http"
 )

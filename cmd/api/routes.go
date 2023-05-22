@@ -1,7 +1,7 @@
 package main
 
 import (
-	handlers "go-ecommerce/internal/handlers_api"
+	handlers "github.com/alpden550/go-ecommerce-stripe/internal/handlers_api"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"

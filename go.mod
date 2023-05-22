@@ -1,4 +1,4 @@
-module go-ecommerce
+module github.com/alpden550/go-ecommerce-stripe
 
 go 1.20
 

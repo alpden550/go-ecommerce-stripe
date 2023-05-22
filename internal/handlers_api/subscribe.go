@@ -3,9 +3,9 @@ package handlers_api
 import (
 	"encoding/json"
 	"fmt"
-	"go-ecommerce/internal/cards"
-	"go-ecommerce/internal/helpers"
-	"go-ecommerce/internal/models"
+	"github.com/alpden550/go-ecommerce-stripe/internal/cards"
+	"github.com/alpden550/go-ecommerce-stripe/internal/helpers"
+	"github.com/alpden550/go-ecommerce-stripe/internal/models"
 	"net/http"
 	"strconv"
 )

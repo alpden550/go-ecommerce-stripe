@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"fmt"
-	"go-ecommerce/internal/helpers"
-	"go-ecommerce/internal/models"
-	"go-ecommerce/internal/renders"
+	"github.com/alpden550/go-ecommerce-stripe/internal/helpers"
+	"github.com/alpden550/go-ecommerce-stripe/internal/models"
+	"github.com/alpden550/go-ecommerce-stripe/internal/renders"
 	"net/http"
 )
 

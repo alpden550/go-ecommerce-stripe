@@ -3,7 +3,7 @@ package helpers
 import (
 	"encoding/json"
 	"errors"
-	"go-ecommerce/internal/configs"
+	"github.com/alpden550/go-ecommerce-stripe/internal/configs"
 	"io"
 	"net/http"
 )

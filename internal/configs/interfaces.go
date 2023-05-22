@@ -1,6 +1,6 @@
 package configs
 
-import "go-ecommerce/internal/models"
+import "github.com/alpden550/go-ecommerce-stripe/internal/models"
 
 type AppConfiger interface {
 	GetDB() models.DBModel

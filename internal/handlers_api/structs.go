@@ -1,6 +1,6 @@
 package handlers_api
 
-import "go-ecommerce/internal/configs"
+import "github.com/alpden550/go-ecommerce-stripe/internal/configs"
 
 var api *configs.ApiApplication
 

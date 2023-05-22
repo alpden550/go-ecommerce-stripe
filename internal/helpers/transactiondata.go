@@ -1,8 +1,8 @@
 package helpers
 
 import (
-	"go-ecommerce/internal/cards"
-	"go-ecommerce/internal/configs"
+	"github.com/alpden550/go-ecommerce-stripe/internal/cards"
+	"github.com/alpden550/go-ecommerce-stripe/internal/configs"
 	"net/http"
 	"strconv"
 )

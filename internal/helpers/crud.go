@@ -1,8 +1,8 @@
 package helpers
 
 import (
-	"go-ecommerce/internal/configs"
-	"go-ecommerce/internal/models"
+	"github.com/alpden550/go-ecommerce-stripe/internal/configs"
+	"github.com/alpden550/go-ecommerce-stripe/internal/models"
 )
 
 func SaveCustomer(app configs.AppConfiger, firstName, lastName, email string) (int, error) {
