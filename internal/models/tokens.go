@@ -40,12 +40,18 @@ func GenerateNewToken(userID int, ttl time.Duration, scope string) (*Token, erro
 }
 
 func (m *DBModel) InsertToken(token *Token, user *User) error {
+	deleteQuery := `DELETE FROM tokens WHERE user_id=$1`
+	_, err := m.DB.Exec(deleteQuery, user.ID)
+	if err != nil {
+		return err
+	}
+
 	query := `
 		INSERT INTO tokens (user_id, name, email, hash)
 		VALUES ($1, $2, $3, $4)
 	`
 
-	_, err := m.DB.Exec(query, user.ID, user.LastName, user.Email, token.Hash)
+	_, err = m.DB.Exec(query, user.ID, user.LastName, user.Email, token.Hash)
 	if err != nil {
 		return err
 	}
