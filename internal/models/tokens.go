@@ -38,3 +38,17 @@ func GenerateNewToken(userID int, ttl time.Duration, scope string) (*Token, erro
 
 	return token, nil
 }
+
+func (m *DBModel) InsertToken(token *Token, user *User) error {
+	query := `
+		INSERT INTO tokens (user_id, name, email, hash)
+		VALUES ($1, $2, $3, $4)
+	`
+
+	_, err := m.DB.Exec(query, user.ID, user.LastName, user.Email, token.Hash)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
