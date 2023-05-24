@@ -4,6 +4,7 @@ create_table("tokens") {
   t.Column("name", "string", {"size": 255})
   t.Column("email", "string", {})
   t.Column("hash", "string", {})
+  t.Column("expire_date", "timestamp", {})
 }
 
 sql("alter table tokens alter column hash type bytea using hash::bytea;")
