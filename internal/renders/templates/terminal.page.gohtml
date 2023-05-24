@@ -4,6 +4,10 @@
     Virtual Terminal
 {{end}}
 
+{{define "in-head"}}
+
+{{end}}
+
 {{define "content"}}
     <h2 class="mt-3 text-center">Virtual Terminal</h2>
     <hr>
@@ -60,6 +64,7 @@
 
 {{define "js"}}
     <script>
+        checkAuth()
         document.getElementById("charge_amount").addEventListener("change", function (event) {
             if (event.target.value !== "") {
                 document.getElementById("amount").value = parseInt((event.target.value * 100), 10);

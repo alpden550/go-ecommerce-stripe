@@ -9,10 +9,8 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="/">Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/virtual-terminal">Virtual Terminal</a>
-                    </li>
-                    <li class="nav-item dropdown">
+
+                    <li id="products-link" class="nav-item dropdown d-none">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
                            data-bs-toggle="dropdown" aria-expanded="false">
                             Products
@@ -23,14 +21,18 @@
                             {{end}}
                             <li><a class="dropdown-item" href="/plans/bronze">Subscription</a></li>
                             <li>
+                                <a class="dropdown-item" href="/virtual-terminal">Virtual Terminal</a>
+                            </li>
+                            <li>
                                 <hr class="dropdown-divider">
                             </li>
+
                         </ul>
                     </li>
                 </ul>
 
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
+                    <li id="login-link" class="nav-item d-none">
                         <a class="nav-link" href="/auth/login">Login</a>
                     </li>
                 </ul>
