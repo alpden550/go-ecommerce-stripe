@@ -31,3 +31,13 @@ func PasswordMatcher(app configs.AppConfiger, hashed, password string) (bool, er
 
 	return true, nil
 }
+
+func FetchUserByToken(app configs.AppConfiger, token string) (*models.User, error) {
+	db := app.GetDB()
+	user, err := db.GetUserForToken(token)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
