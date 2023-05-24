@@ -1,10 +1,12 @@
 package handlers_api
 
 import (
+	"errors"
 	"fmt"
 	"github.com/alpden550/go-ecommerce-stripe/internal/helpers"
 	"github.com/alpden550/go-ecommerce-stripe/internal/models"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -53,4 +55,43 @@ func CreateAuthToken(writer http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		return
 	}
+}
+
+func CheckAuthentication(writer http.ResponseWriter, request *http.Request) {
+	user, err := authenticateToken(request)
+	if err != nil {
+		_ = helpers.InvalidCredentials(api, writer)
+		return
+	}
+	var payload struct {
+		Error   bool   `json:"error"`
+		Message string `json:"message"`
+	}
+	payload.Error = false
+	payload.Message = fmt.Sprintf("authenticated user %s", user.Email)
+	err = helpers.WriteJSON(api, writer, http.StatusOK, payload)
+}
+
+func authenticateToken(request *http.Request) (*models.User, error) {
+	authorizationHeader := request.Header.Get("Authorization")
+	if authorizationHeader == "" {
+		return nil, errors.New("no authorization header found")
+	}
+
+	headerParts := strings.Split(authorizationHeader, " ")
+	if len(headerParts) != 2 || headerParts[0] != "Bearer" {
+		return nil, errors.New("no authorization header found")
+	}
+
+	token := headerParts[1]
+	if len(token) != 26 {
+		return nil, errors.New("token has wrong size")
+	}
+
+	user, err := helpers.FetchUserByToken(api, token)
+	if err != nil {
+		return nil, errors.New("no matching user found")
+	}
+
+	return user, nil
 }
