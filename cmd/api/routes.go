@@ -20,6 +20,7 @@ func routes() http.Handler {
 	}))
 
 	mux.Post("/api/auth/login", handlers.CreateAuthToken)
+	mux.Post("/api/auth/is_authenticated", handlers.CheckAuthentication)
 
 	mux.Get("/api/widgets/{id}", handlers.GetWidgetByID)
 	mux.Post("/api/payment-intent", handlers.GetPaymentIntent)
