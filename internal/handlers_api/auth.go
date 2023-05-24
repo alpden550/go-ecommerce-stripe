@@ -26,6 +26,7 @@ func CreateAuthToken(writer http.ResponseWriter, request *http.Request) {
 		_ = helpers.InvalidCredentials(api, writer)
 		return
 	}
+
 	_, err = helpers.PasswordMatcher(api, user.Password, userInput.Password)
 	if err != nil {
 		_ = helpers.InvalidCredentials(api, writer)
@@ -58,7 +59,7 @@ func CreateAuthToken(writer http.ResponseWriter, request *http.Request) {
 }
 
 func CheckAuthentication(writer http.ResponseWriter, request *http.Request) {
-	user, err := authenticateToken(request)
+	user, err := AuthenticateToken(request)
 	if err != nil {
 		_ = helpers.InvalidCredentials(api, writer)
 		return
@@ -72,7 +73,7 @@ func CheckAuthentication(writer http.ResponseWriter, request *http.Request) {
 	err = helpers.WriteJSON(api, writer, http.StatusOK, payload)
 }
 
-func authenticateToken(request *http.Request) (*models.User, error) {
+func AuthenticateToken(request *http.Request) (*models.User, error) {
 	authorizationHeader := request.Header.Get("Authorization")
 	if authorizationHeader == "" {
 		return nil, errors.New("no authorization header found")
