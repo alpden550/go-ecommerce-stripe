@@ -10,7 +10,7 @@ import (
 
 func VirtualTerminal(writer http.ResponseWriter, request *http.Request) {
 	if err := renders.RenderTemplate(
-		writer, request, "terminal", &renders.TemplateData{}, "stripe-js", "nav",
+		writer, request, "terminal", &renders.TemplateData{}, "nav",
 	); err != nil {
 		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 	}
