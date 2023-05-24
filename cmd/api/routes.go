@@ -26,5 +26,11 @@ func routes() http.Handler {
 	mux.Post("/api/payment-intent", handlers.GetPaymentIntent)
 	mux.Post("/api/subscribe", handlers.Subscribe)
 
+	mux.Route("/api/admin", func(mux chi.Router) {
+		mux.Use(MiddlewareAuth)
+
+		mux.Post("/virtual-terminal-payment-succeeded", handlers.VirtualTerminalPaymentSucceeded)
+	})
+
 	return mux
 }
