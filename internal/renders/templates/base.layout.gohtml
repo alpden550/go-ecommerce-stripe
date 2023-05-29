@@ -52,7 +52,7 @@
         function logout() {
             localStorage.removeItem("token");
             localStorage.removeItem("token_expire");
-            location.href = "/";
+            location.href = "/auth/logout";
         }
 
         function checkAuth() {
