@@ -16,10 +16,14 @@ func routes() http.Handler {
 	mux.Get("/", handlers.IndexPage)
 
 	mux.Get("/auth/login", handlers.Login)
+	mux.Post("/auth/login", handlers.SubmitLogin)
+	mux.Get("/auth/logout", handlers.Logout)
 
-	mux.Get("/virtual-terminal", handlers.VirtualTerminal)
-	mux.Post("/virtual-terminal/payment-succeeded", handlers.VirtualTerminalPaymentSucceed)
-	mux.Get("/virtual-terminal/receipt", handlers.VirtualTerminalShowReceipt)
+	mux.Route("/admin", func(mux chi.Router) {
+		mux.Use(MiddlewareAuth)
+
+		mux.Get("/virtual-terminal", handlers.VirtualTerminal)
+	})
 
 	mux.Get("/widgets/{id}", handlers.WidgetChargeOnce)
 	mux.Post("/widgets/payment-succeeded", handlers.WidgetPaymentSucceed)
