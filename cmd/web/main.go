@@ -5,6 +5,7 @@ import (
 	"encoding/gob"
 	"flag"
 	"fmt"
+	"github.com/alexedwards/scs/postgresstore"
 	"github.com/alexedwards/scs/v2"
 	"github.com/alpden550/go-ecommerce-stripe/internal/configs"
 	"github.com/alpden550/go-ecommerce-stripe/internal/driver"
@@ -54,9 +55,6 @@ func main() {
 }
 
 func prepare() (*sql.DB, error) {
-	session = scs.New()
-	session.Lifetime = 24 * time.Hour
-
 	config.Stripe.Key = os.Getenv("STRIPE_KEY")
 	config.Stripe.Secret = os.Getenv("STRIPE_SECRET")
 	config.DB.Dsn = os.Getenv("DSN")
@@ -68,6 +66,9 @@ func prepare() (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	session = scs.New()
+	session.Store = postgresstore.New(conn)
 
 	tc := make(map[string]*template.Template)
 	app = &configs.AppConfig{
