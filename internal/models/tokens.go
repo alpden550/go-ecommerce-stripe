@@ -5,6 +5,9 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base32"
+	"errors"
+	"fmt"
+	"golang.org/x/crypto/bcrypt"
 	"time"
 )
 
@@ -84,4 +87,26 @@ func (m *DBModel) GetUserForToken(token string) (*User, error) {
 	}
 
 	return &user, nil
+}
+
+func (m *DBModel) Authenticate(email, password string) (int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var id int
+	var hashedPassword string
+	query := `SELECT id, password from users WHERE email=$1`
+
+	if err := m.DB.QueryRowContext(ctx, query, email).Scan(&id, &hashedPassword); err != nil {
+		return id, err
+	}
+
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+	if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+		return 0, errors.New("incorrect password")
+	} else if err != nil {
+		return 0, fmt.Errorf("%w", err)
+	}
+
+	return id, nil
 }
