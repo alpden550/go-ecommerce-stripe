@@ -12,6 +12,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -28,6 +29,7 @@ func main() {
 
 	flag.IntVar(&config.Port, "port", 4001, "Server port to listen on")
 	flag.StringVar(&config.Env, "env", "development", "Application environment {development|production|maintenance}")
+	flag.StringVar(&config.FrontEnd, "api", "http://localhost:4000", "URL to frontend")
 	flag.Parse()
 
 	conn, err := prepare()
@@ -43,9 +45,19 @@ func main() {
 }
 
 func prepare() (*sql.DB, error) {
+	port, err := strconv.Atoi(os.Getenv("EMAIL_PORT"))
+	if err != nil {
+		log.Printf("%e", err)
+	}
+
 	config.Stripe.Key = os.Getenv("STRIPE_KEY")
 	config.Stripe.Secret = os.Getenv("STRIPE_SECRET")
 	config.DB.Dsn = os.Getenv("DSN")
+	config.SMTP.Host = os.Getenv("EMAIL_HOST")
+	config.SMTP.Port = port
+	config.SMTP.Username = os.Getenv("EMAIL_USERNAME")
+	config.SMTP.Password = os.Getenv("EMAIL_PASSWORD")
+	config.SecretKey = os.Getenv("SECRET_KEY")
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
