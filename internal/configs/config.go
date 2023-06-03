@@ -3,7 +3,6 @@ package configs
 type Config struct {
 	Port int
 	Env  string
-	Api  string
 	DB   struct {
 		Dsn string
 	}
@@ -11,4 +10,13 @@ type Config struct {
 		Secret string
 		Key    string
 	}
+	SMTP struct {
+		Host     string
+		Port     int
+		Username string
+		Password string
+	}
+	SecretKey string
+	Api       string
+	FrontEnd  string
 }
