@@ -42,3 +42,11 @@ func Logout(writer http.ResponseWriter, request *http.Request) {
 
 	http.Redirect(writer, request, "/", http.StatusSeeOther)
 }
+
+func ForgotPassword(writer http.ResponseWriter, request *http.Request) {
+	if err := renders.RenderTemplate(
+		writer, request, "forgot-password", &renders.TemplateData{}, "nav",
+	); err != nil {
+		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
+	}
+}
