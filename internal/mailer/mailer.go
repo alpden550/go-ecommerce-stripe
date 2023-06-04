@@ -27,14 +27,14 @@ func serveSMTPClient(api *configs.ApiApplication) (*mail.SMTPClient, error) {
 	return smtpClient, nil
 }
 
-func SendEmail(api *configs.ApiApplication, from, to, subject, tmpl string, data interface{}) error {
-	formattedMessage, err := renderHTML(tmpl, data)
+func SendEmail(api *configs.ApiApplication, from, to, subject, textTmpl, htmlTmpl string, data interface{}) error {
+	formattedMessage, err := renderTemplate(htmlTmpl, data)
 	if err != nil {
 		api.ErrorLog.Printf("%w", fmt.Errorf("%e", err))
 		return err
 	}
 
-	plainMessage, err := renderPlainText(tmpl, data)
+	plainMessage, err := renderTemplate(textTmpl, data)
 	if err != nil {
 		api.ErrorLog.Printf("%w", fmt.Errorf("%e", err))
 		return err
