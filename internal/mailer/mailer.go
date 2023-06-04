@@ -59,7 +59,5 @@ func SendEmail(api *configs.ApiApplication, from, to, subject, tmpl string, data
 		return err
 	}
 
-	fmt.Println(formattedMessage)
-
 	return nil
 }
