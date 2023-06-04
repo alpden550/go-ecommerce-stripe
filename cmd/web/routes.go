@@ -19,6 +19,7 @@ func routes() http.Handler {
 	mux.Post("/auth/login", handlers.SubmitLogin)
 	mux.Get("/auth/logout", handlers.Logout)
 	mux.Get("/auth/forgot-password", handlers.ForgotPassword)
+	mux.Get("/auth/reset-password", handlers.ShowResetPassword)
 
 	mux.Route("/admin", func(mux chi.Router) {
 		mux.Use(MiddlewareAuth)
