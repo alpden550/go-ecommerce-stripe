@@ -39,6 +39,7 @@ func main() {
 	flag.IntVar(&config.Port, "port", 4000, "Server port to listen on")
 	flag.StringVar(&config.Env, "env", "development", "Application environment {development|production}")
 	flag.StringVar(&config.Api, "api", "http://localhost:4001", "URL to api")
+	flag.StringVar(&config.FrontEnd, "frontend", "http://localhost:4000", "URL to frontend")
 	flag.Parse()
 
 	conn, err := prepare()
@@ -58,6 +59,7 @@ func prepare() (*sql.DB, error) {
 	config.Stripe.Key = os.Getenv("STRIPE_KEY")
 	config.Stripe.Secret = os.Getenv("STRIPE_SECRET")
 	config.DB.Dsn = os.Getenv("DSN")
+	config.SecretKey = os.Getenv("SECRET_KEY")
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
