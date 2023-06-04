@@ -11,10 +11,11 @@ type Config struct {
 		Key    string
 	}
 	SMTP struct {
-		Host     string
-		Port     int
-		Username string
-		Password string
+		Host      string
+		Port      int
+		Username  string
+		Password  string
+		EmailFrom string
 	}
 	SecretKey string
 	Api       string
