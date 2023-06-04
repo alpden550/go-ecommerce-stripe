@@ -41,3 +41,12 @@ func FetchUserByToken(app configs.AppConfiger, token string) (*models.User, erro
 
 	return user, nil
 }
+
+func UpdateUserPassword(app configs.AppConfiger, user *models.User, hash string) error {
+	db := app.GetDB()
+	if err := db.SetUserPassword(user, hash); err != nil {
+		return err
+	}
+
+	return nil
+}
