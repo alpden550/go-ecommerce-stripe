@@ -57,6 +57,7 @@ func prepare() (*sql.DB, error) {
 	config.SMTP.Port = port
 	config.SMTP.Username = os.Getenv("EMAIL_USERNAME")
 	config.SMTP.Password = os.Getenv("EMAIL_PASSWORD")
+	config.SMTP.EmailFrom = os.Getenv("EMAIL_FROM")
 	config.SecretKey = os.Getenv("SECRET_KEY")
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
