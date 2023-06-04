@@ -3,10 +3,12 @@ package handlers_api
 import (
 	"errors"
 	"fmt"
+	"github.com/alpden550/go-ecommerce-stripe/internal/encryption"
 	"github.com/alpden550/go-ecommerce-stripe/internal/helpers"
 	"github.com/alpden550/go-ecommerce-stripe/internal/mailer"
 	"github.com/alpden550/go-ecommerce-stripe/internal/models"
 	"github.com/alpden550/go-ecommerce-stripe/internal/urlsigner"
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"strings"
 	"time"
@@ -145,4 +147,46 @@ func SendPasswordResetEmail(writer http.ResponseWriter, request *http.Request) {
 		Message: "sent",
 	}
 	_ = helpers.WriteJSON(api, writer, http.StatusOK, response)
+}
+
+func ResetPassword(writer http.ResponseWriter, request *http.Request) {
+	var payload struct {
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
+
+	if err := helpers.ReadJSON(api, writer, request, &payload); err != nil {
+		_ = helpers.BadRequest(api, writer, request, err)
+		return
+	}
+
+	encryptor := encryption.Encryption{Key: []byte(api.Config.SecretKey)}
+	realEmail, err := encryptor.Decrypt(payload.Email)
+	if err != nil {
+		_ = helpers.BadRequest(api, writer, request, err)
+		return
+	}
+
+	user, err := helpers.FetchUserByEmail(api, realEmail)
+	if err != nil {
+		_ = helpers.BadRequest(api, writer, request, err)
+		return
+	}
+
+	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(payload.Password), 12)
+	if err != nil {
+		_ = helpers.BadRequest(api, writer, request, err)
+		return
+	}
+
+	if err = helpers.UpdateUserPassword(api, &user, string(newHashedPassword)); err != nil {
+		_ = helpers.BadRequest(api, writer, request, err)
+		return
+	}
+
+	response := jsonResponse{
+		OK:      true,
+		Message: "Password was changed",
+	}
+	_ = helpers.WriteJSON(api, writer, http.StatusCreated, response)
 }
