@@ -35,3 +35,16 @@ func (m *DBModel) GetUserByEmail(email string) (User, error) {
 
 	return user, nil
 }
+
+func (m *DBModel) SetUserPassword(user *User, hash string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	query := `UPDATE users SET password = $1 WHERE id = $2`
+	_, err := m.DB.ExecContext(ctx, query, hash, user.ID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
