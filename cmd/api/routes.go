@@ -22,6 +22,7 @@ func routes() http.Handler {
 	mux.Post("/api/auth/login", handlers.CreateAuthToken)
 	mux.Post("/api/auth/is_authenticated", handlers.CheckAuthentication)
 	mux.Post("/api/auth/forgot-password", handlers.SendPasswordResetEmail)
+	mux.Post("/api/auth/reset-password", handlers.ResetPassword)
 
 	mux.Get("/api/widgets/{id}", handlers.GetWidgetByID)
 	mux.Post("/api/payment-intent", handlers.GetPaymentIntent)
