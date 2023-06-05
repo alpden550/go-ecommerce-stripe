@@ -39,16 +39,6 @@
         let loginLink = document.getElementById("login-link");
         let productsLink = document.getElementById("products-link");
 
-        document.addEventListener("DOMContentLoaded", function () {
-            if (localStorage.getItem("token") !== null) {
-                loginLink.innerHTML = '<a class="nav-link" onclick="logout()" href="#!">Logout</a>';
-                productsLink.classList.remove("d-none");
-            } else {
-                loginLink.innerHTML = '<a class="nav-link" href="/auth/login">Login</a>';
-            }
-            loginLink.classList.remove("d-none")
-        })
-
         function logout() {
             localStorage.removeItem("token");
             localStorage.removeItem("token_expire");
