@@ -49,7 +49,7 @@ func RenderTemplate(writer http.ResponseWriter, request *http.Request, page stri
 
 	_, templateInMap := app.TemplateCache[templateToRender]
 
-	if app.Config.Env == "production" && templateInMap {
+	if templateInMap {
 		t = app.TemplateCache[templateToRender]
 	} else {
 		t, err = parseTemplate(partials, page, templateToRender)
