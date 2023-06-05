@@ -1,8 +1,8 @@
 create_table("orders") {
     t.Column("id", "integer", {primary: true})
-    t.Column("widget_id", "integer", {"unsigned":true})
-    t.Column("transaction_id", "integer", {"unsigned":true})
-    t.Column("status_id", "integer", {"unsigned":true})
+    t.Column("widget_id", "integer", {"null": true})
+    t.Column("transaction_id", "integer", {})
+    t.Column("status_id", "integer", {})
     t.Column("quantity", "integer", {})
     t.Column("amount", "integer", {})
 }
