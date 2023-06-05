@@ -81,7 +81,7 @@ func WidgetPaymentSucceed(writer http.ResponseWriter, request *http.Request) {
 		Quantity:      1,
 		Amount:        transactionData.Amount,
 	}
-	_, err = helpers.SaveOrder(app, order)
+	_, err = helpers.SaveWidgetOrder(app, order)
 	if err != nil {
 		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 		return
