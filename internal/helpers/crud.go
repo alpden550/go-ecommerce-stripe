@@ -31,9 +31,19 @@ func SaveTransaction(app configs.AppConfiger, transaction models.Transaction) (i
 	return id, nil
 }
 
-func SaveOrder(app configs.AppConfiger, order models.Order) (int, error) {
+func SaveWidgetOrder(app configs.AppConfiger, order models.Order) (int, error) {
 	db := app.GetDB()
 	id, err := db.InsertOrder(order)
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}
+
+func SaveSubscriptionOrder(app configs.AppConfiger, order models.Order) (int, error) {
+	db := app.GetDB()
+	id, err := db.InsertSubscriptionOrder(order)
 	if err != nil {
 		return 0, err
 	}
