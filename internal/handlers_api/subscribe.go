@@ -66,14 +66,14 @@ func Subscribe(w http.ResponseWriter, r *http.Request) {
 		}
 
 		order := models.Order{
-			WidgetID:      productID,
-			TransactionID: transactionID,
-			CustomerID:    customerID,
-			StatusID:      1,
-			Quantity:      1,
-			Amount:        amount,
+			SubscriptionID: productID,
+			TransactionID:  transactionID,
+			CustomerID:     customerID,
+			StatusID:       1,
+			Quantity:       1,
+			Amount:         amount,
 		}
-		_, err = helpers.SaveOrder(api, order)
+		_, err = helpers.SaveSubscriptionOrder(api, order)
 		if err != nil {
 			api.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 			return
