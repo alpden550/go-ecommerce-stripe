@@ -32,6 +32,13 @@ func AddDefaultData(td *TemplateData, r *http.Request) *TemplateData {
 	td.StripeSecret = app.Config.Stripe.Secret
 	td.StripePublishKey = app.Config.Stripe.Key
 	td.Widgets = widgetsData
+
+	if app.Session.Exists(r.Context(), "userId") {
+		td.IsAuthenticated = 1
+	} else {
+		td.IsAuthenticated = 0
+	}
+
 	return td
 }
 
