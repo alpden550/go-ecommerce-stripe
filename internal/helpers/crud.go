@@ -51,7 +51,7 @@ func SaveSubscriptionOrder(app configs.AppConfiger, order models.Order) (int, er
 	return id, nil
 }
 
-func FetchDbWidgets(app configs.AppConfiger) ([]models.Widget, error) {
+func FetchDbWidgets(app configs.AppConfiger) ([]*models.Widget, error) {
 	db := app.GetDB()
 	widgets, err := db.GetAllWidgets()
 	if err != nil {
@@ -68,4 +68,14 @@ func SaveToken(app configs.AppConfiger, token *models.Token, user *models.User) 
 	}
 
 	return nil
+}
+
+func FetchAllWidgetOrder(app configs.AppConfiger) ([]*models.Order, error) {
+	db := app.GetDB()
+	orders, err := db.GetWidgetOrders()
+	if err != nil {
+		return nil, err
+	}
+
+	return orders, nil
 }
