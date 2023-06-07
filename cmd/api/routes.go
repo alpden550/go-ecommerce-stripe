@@ -33,6 +33,7 @@ func routes() http.Handler {
 
 		mux.Post("/virtual-terminal-payment-succeeded", handlers.VirtualTerminalPaymentSucceeded)
 		mux.Get("/all-sales", handlers.AllSales)
+		mux.Get("/all-subscriptions", handlers.AllSubscriptions)
 	})
 
 	return mux
