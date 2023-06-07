@@ -10,7 +10,12 @@ import (
 
 func Login(writer http.ResponseWriter, request *http.Request) {
 	if err := renders.RenderTemplate(
-		writer, request, "login", &renders.TemplateData{}, "nav",
+		writer,
+		request,
+		"auth/login.page.gohtml",
+		"login.page.gohtml",
+		&renders.TemplateData{},
+		"nav",
 	); err != nil {
 		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 	}
@@ -47,7 +52,12 @@ func Logout(writer http.ResponseWriter, request *http.Request) {
 
 func ForgotPassword(writer http.ResponseWriter, request *http.Request) {
 	if err := renders.RenderTemplate(
-		writer, request, "forgot-password", &renders.TemplateData{}, "nav",
+		writer,
+		request,
+		"auth/forgot-password.page.gohtml",
+		"forgot-password.page.gohtml",
+		&renders.TemplateData{},
+		"nav",
 	); err != nil {
 		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 	}
@@ -81,7 +91,12 @@ func ShowResetPassword(writer http.ResponseWriter, request *http.Request) {
 		"email": encrEmail,
 	}
 	if err := renders.RenderTemplate(
-		writer, request, "reset-password", &renders.TemplateData{Data: data}, "nav",
+		writer,
+		request,
+		"auth/reset-password.page.gohtml",
+		"reset-password.page.gohtml",
+		&renders.TemplateData{Data: data},
+		"nav",
 	); err != nil {
 		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 	}

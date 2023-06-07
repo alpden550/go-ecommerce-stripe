@@ -8,7 +8,7 @@ import (
 
 func AllSales(writer http.ResponseWriter, request *http.Request) {
 	if err := renders.RenderTemplate(
-		writer, request, "all-sales", &renders.TemplateData{}, "nav",
+		writer, request, "admin/all-sales.page.gohtml", "all-sales.page.gohtml", &renders.TemplateData{}, "nav",
 	); err != nil {
 		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 	}
@@ -16,7 +16,7 @@ func AllSales(writer http.ResponseWriter, request *http.Request) {
 
 func AllSubscriptions(writer http.ResponseWriter, request *http.Request) {
 	if err := renders.RenderTemplate(
-		writer, request, "all-subscriptions", &renders.TemplateData{}, "nav",
+		writer, request, "admin/all-subscriptions.page.gohtml", "all-subscriptions.page.gohtml", &renders.TemplateData{}, "nav",
 	); err != nil {
 		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 	}

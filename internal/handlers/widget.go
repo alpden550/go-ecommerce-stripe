@@ -28,7 +28,12 @@ func WidgetChargeOnce(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	if err := renders.RenderTemplate(
-		writer, request, "buy-once", &renders.TemplateData{Data: data}, "stripe-js", "nav",
+		writer,
+		request,
+		"buy-once.page.gohtml",
+		"buy-once.page.gohtml",
+		&renders.TemplateData{Data: data},
+		"stripe-js", "nav",
 	); err != nil {
 		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 	}
@@ -101,7 +106,12 @@ func WidgetShowReceipt(writer http.ResponseWriter, request *http.Request) {
 	}
 	app.Session.Remove(request.Context(), "receipt")
 	if err := renders.RenderTemplate(
-		writer, request, "receipt", &renders.TemplateData{Data: paymentData}, "nav",
+		writer,
+		request,
+		"receipt.page.gohtml",
+		"receipt.page.gohtml",
+		&renders.TemplateData{Data: paymentData},
+		"nav",
 	); err != nil {
 		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 		return

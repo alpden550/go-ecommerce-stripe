@@ -16,7 +16,12 @@ func BronzePlan(writer http.ResponseWriter, request *http.Request) {
 		"subscription": sbcr,
 	}
 	if err := renders.RenderTemplate(
-		writer, request, "bronze-plan", &renders.TemplateData{Data: data}, "nav",
+		writer,
+		request,
+		"bronze-plan.page.gohtml",
+		"bronze-plan.page.gohtml",
+		&renders.TemplateData{Data: data},
+		"nav",
 	); err != nil {
 		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 	}
@@ -24,7 +29,12 @@ func BronzePlan(writer http.ResponseWriter, request *http.Request) {
 
 func BronzePlanShowReceipt(writer http.ResponseWriter, request *http.Request) {
 	if err := renders.RenderTemplate(
-		writer, request, "bronze-plan-receipt", &renders.TemplateData{}, "nav",
+		writer,
+		request,
+		"bronze-plan-receipt.page.gohtml",
+		"bronze-plan-receipt.page.gohtml",
+		&renders.TemplateData{},
+		"nav",
 	); err != nil {
 		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 	}

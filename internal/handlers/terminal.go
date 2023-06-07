@@ -10,7 +10,12 @@ import (
 
 func VirtualTerminal(writer http.ResponseWriter, request *http.Request) {
 	if err := renders.RenderTemplate(
-		writer, request, "terminal", &renders.TemplateData{}, "nav",
+		writer,
+		request,
+		"terminal.page.gohtml",
+		"terminal.page.gohtml",
+		&renders.TemplateData{},
+		"nav",
 	); err != nil {
 		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 	}
@@ -55,7 +60,12 @@ func VirtualTerminalShowReceipt(writer http.ResponseWriter, request *http.Reques
 	}
 	app.Session.Remove(request.Context(), "virtual-terminal-receipt")
 	if err := renders.RenderTemplate(
-		writer, request, "receipt", &renders.TemplateData{Data: paymentData}, "nav",
+		writer,
+		request,
+		"receipt.page.gohtml",
+		"receipt.page.gohtml",
+		&renders.TemplateData{Data: paymentData},
+		"nav",
 	); err != nil {
 		app.ErrorLog.Printf("%e", err)
 		return

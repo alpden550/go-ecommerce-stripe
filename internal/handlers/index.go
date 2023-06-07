@@ -15,7 +15,12 @@ func SetAppToHandlers(a *configs.AppConfig) {
 
 func IndexPage(writer http.ResponseWriter, request *http.Request) {
 	if err := renders.RenderTemplate(
-		writer, request, "index", &renders.TemplateData{}, "nav",
+		writer,
+		request,
+		"index.page.gohtml",
+		"index.page.gohtml",
+		&renders.TemplateData{},
+		"nav",
 	); err != nil {
 		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 	}
