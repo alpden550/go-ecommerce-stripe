@@ -15,7 +15,7 @@ var functions = template.FuncMap{
 	"formatAmount": formatAmount,
 }
 
-//go:embed templates
+//go:embed templates/*
 var templateFS embed.FS
 
 func SetAppToRender(a *configs.AppConfig) {
@@ -42,21 +42,41 @@ func AddDefaultData(td *TemplateData, r *http.Request) *TemplateData {
 	return td
 }
 
-func RenderTemplate(writer http.ResponseWriter, request *http.Request, page string, td *TemplateData, partials ...string) error {
+func RenderTemplate(
+	writer http.ResponseWriter,
+	request *http.Request,
+	pagePath, pageName string,
+	td *TemplateData,
+	partials ...string,
+) error {
 	var t *template.Template
+	var partialFiles []string
 	var err error
-	templateToRender := fmt.Sprintf("templates/%s.page.gohtml", page)
+	templateToRender := fmt.Sprintf("templates/%s", pagePath)
+
+	if len(partials) > 0 {
+		for _, x := range partials {
+			partialFiles = append(partialFiles, fmt.Sprintf("templates/partials/%s.partial.gohtml", x))
+		}
+	}
+
+	templateFiles := []string{
+		"templates/base.layout.gohtml",
+		templateToRender,
+	}
+	templateFiles = append(templateFiles, partialFiles...)
 
 	_, templateInMap := app.TemplateCache[templateToRender]
 
 	if templateInMap {
 		t = app.TemplateCache[templateToRender]
 	} else {
-		t, err = parseTemplate(partials, page, templateToRender)
-		if err != nil {
-			app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
-			return err
-		}
+		t = template.
+			Must(template.New(pageName).
+				Funcs(functions).
+				ParseFS(templateFS, templateFiles...),
+			)
+		app.TemplateCache[templateToRender] = t
 	}
 
 	if td == nil {
@@ -72,35 +92,4 @@ func RenderTemplate(writer http.ResponseWriter, request *http.Request, page stri
 	}
 
 	return nil
-}
-
-func parseTemplate(partials []string, page, templateToRender string) (*template.Template, error) {
-	var t *template.Template
-	var err error
-
-	// build partials
-	if len(partials) > 0 {
-		for i, x := range partials {
-			partials[i] = fmt.Sprintf("templates/partials/%s.partial.gohtml", x)
-		}
-	}
-
-	partialFiles := []string{
-		"templates/base.layout.gohtml",
-		templateToRender,
-	}
-	partialFiles = append(partialFiles, partials...)
-
-	t, err = template.
-		New(fmt.Sprintf("%s.page.gohtml", page)).
-		Funcs(functions).
-		ParseFS(templateFS, partialFiles...)
-
-	if err != nil {
-		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
-		return nil, err
-	}
-
-	app.TemplateCache[templateToRender] = t
-	return t, nil
 }
