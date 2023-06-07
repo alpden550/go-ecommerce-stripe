@@ -40,8 +40,8 @@ func (m *DBModel) GetWidget(id int) (Widget, error) {
 	return widget, nil
 }
 
-func (m *DBModel) GetAllWidgets() ([]Widget, error) {
-	var widgets []Widget
+func (m *DBModel) GetAllWidgets() ([]*Widget, error) {
+	var widgets []*Widget
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
@@ -50,6 +50,7 @@ func (m *DBModel) GetAllWidgets() ([]Widget, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		var widget Widget
@@ -64,7 +65,7 @@ func (m *DBModel) GetAllWidgets() ([]Widget, error) {
 		); err != nil {
 			return widgets, err
 		}
-		widgets = append(widgets, widget)
+		widgets = append(widgets, &widget)
 	}
 
 	if err = rows.Err(); err != nil {
