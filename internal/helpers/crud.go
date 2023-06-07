@@ -79,3 +79,13 @@ func FetchAllWidgetOrder(app configs.AppConfiger) ([]*models.Order, error) {
 
 	return orders, nil
 }
+
+func FetchAllSubscriptionsOrder(app configs.AppConfiger) ([]*models.Order, error) {
+	db := app.GetDB()
+	orders, err := db.GetSubscriptionsOrders()
+	if err != nil {
+		return nil, err
+	}
+
+	return orders, nil
+}
