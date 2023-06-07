@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"time"
 )
 
@@ -12,16 +13,20 @@ type OrderStatus struct {
 }
 
 type Order struct {
-	ID             int       `json:"id"`
-	WidgetID       int       `json:"widget_id"`
-	SubscriptionID int       `json:"subscription_id"`
-	TransactionID  int       `json:"transaction_id"`
-	CustomerID     int       `json:"customer_id"`
-	StatusID       int       `json:"status_id"`
-	Quantity       int       `json:"quantity"`
-	Amount         int       `json:"amount"`
-	CreatedAt      time.Time `json:"-"`
-	UpdatedAt      time.Time `json:"-"`
+	ID             int         `json:"id"`
+	WidgetID       int         `json:"widget_id"`
+	SubscriptionID int         `json:"subscription_id"`
+	TransactionID  int         `json:"transaction_id"`
+	CustomerID     int         `json:"customer_id"`
+	StatusID       int         `json:"status_id"`
+	Quantity       int         `json:"quantity"`
+	Amount         int         `json:"amount"`
+	CreatedAt      time.Time   `json:"-"`
+	UpdatedAt      time.Time   `json:"-"`
+	Widget         Widget      `json:"widget"`
+	Transaction    Transaction `json:"transaction"`
+	Customer       Customer    `json:"customer"`
+	Status         OrderStatus `json:"status"`
 }
 
 func (m *DBModel) InsertOrder(order Order) (int, error) {
@@ -60,4 +65,64 @@ func (m *DBModel) InsertSubscriptionOrder(order Order) (int, error) {
 	}
 
 	return id, nil
+}
+
+func (m *DBModel) GetWidgetOrders() ([]*Order, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var orders []*Order
+	query := `
+		SELECT
+    		o.id, o.quantity, o.amount, o.created_at,
+    		w.name, w.description,
+    		t.id, t.currency, t.last_four, t.expire_year, t.expire_month, t.payment_intent_code, t.bank_return_code,
+    		s.name, c.email, c.first_name, c.last_name
+		FROM orders o
+		LEFT JOIN widgets w ON w.id = o.widget_id
+		LEFT JOIN transactions t ON t.id = o.transaction_id
+		LEFT JOIN statuses s on s.id = o.status_id
+		LEFT JOIN customers c on c.id = o.customer_id
+		WHERE o.widget_id IS NOT NULL
+		ORDER BY o.created_at DESC
+	`
+
+	rows, err := m.DB.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var o Order
+		if err = rows.Scan(
+			&o.ID,
+			&o.Quantity,
+			&o.Amount,
+			&o.CreatedAt,
+			&o.Widget.Name,
+			&o.Widget.Description,
+			&o.Transaction.ID,
+			&o.Transaction.Currency,
+			&o.Transaction.LastFour,
+			&o.Transaction.ExpireYear,
+			&o.Transaction.ExpireMonth,
+			&o.Transaction.PaymentIntentCode,
+			&o.Transaction.BankReturnCode,
+			&o.Status.Name,
+			&o.Customer.Email,
+			&o.Customer.FirstName,
+			&o.Customer.LastName,
+		); err != nil {
+			return orders, err
+		}
+
+		orders = append(orders, &o)
+	}
+
+	if err = rows.Err(); err != nil {
+		return orders, err
+	}
+
+	return orders, nil
 }
