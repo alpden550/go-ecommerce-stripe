@@ -71,11 +71,10 @@ func RenderTemplate(
 	if templateInMap {
 		t = app.TemplateCache[templateToRender]
 	} else {
-		t = template.
-			Must(template.New(pageName).
-				Funcs(functions).
-				ParseFS(templateFS, templateFiles...),
-			)
+		t = template.Must(template.New(pageName).
+			Funcs(functions).
+			ParseFS(templateFS, templateFiles...),
+		)
 		app.TemplateCache[templateToRender] = t
 	}
 
