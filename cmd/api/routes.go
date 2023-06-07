@@ -32,6 +32,7 @@ func routes() http.Handler {
 		mux.Use(MiddlewareAuth)
 
 		mux.Post("/virtual-terminal-payment-succeeded", handlers.VirtualTerminalPaymentSucceeded)
+		mux.Get("/all-sales", handlers.AllSales)
 	})
 
 	return mux
