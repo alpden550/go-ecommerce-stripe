@@ -11,4 +11,4 @@ create_table("subscriptions") {
 sql("alter table widgets alter column created_at set default now();")
 sql("alter table widgets alter column updated_at set default now();")
 
-sql("insert into subscriptions (name, description, inventory_level, price, created_at, updated_at) values ('Bronze Plan', 'Get three widgets for the price of two.', 10000, 2000, now(), now());")
+sql("insert into subscriptions (name, description, inventory_level, price, plan_id, created_at, updated_at) values ('Bronze Plan', 'Get three widgets for the price of two.', 10000, 2000, 'price_1N6wlbAvEGPPmWToPmr7XnMV', now(), now());")
