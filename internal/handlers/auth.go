@@ -9,6 +9,10 @@ import (
 )
 
 func Login(writer http.ResponseWriter, request *http.Request) {
+	if app.Session.Exists(request.Context(), "userId") {
+		http.Redirect(writer, request, "/", http.StatusSeeOther)
+	}
+
 	if err := renders.RenderTemplate(
 		writer,
 		request,
@@ -51,6 +55,10 @@ func Logout(writer http.ResponseWriter, request *http.Request) {
 }
 
 func ForgotPassword(writer http.ResponseWriter, request *http.Request) {
+	if app.Session.Exists(request.Context(), "userId") {
+		http.Redirect(writer, request, "/", http.StatusSeeOther)
+	}
+
 	if err := renders.RenderTemplate(
 		writer,
 		request,
@@ -64,6 +72,10 @@ func ForgotPassword(writer http.ResponseWriter, request *http.Request) {
 }
 
 func ShowResetPassword(writer http.ResponseWriter, request *http.Request) {
+	if app.Session.Exists(request.Context(), "userId") {
+		http.Redirect(writer, request, "/", http.StatusSeeOther)
+	}
+
 	url := request.RequestURI
 	testUrl := fmt.Sprintf("%s%s", app.Config.FrontEnd, url)
 	email := request.URL.Query().Get("email")
