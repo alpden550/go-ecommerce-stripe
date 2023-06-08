@@ -75,7 +75,7 @@ func (m *DBModel) GetWidgetOrders() ([]*Order, error) {
 	var orders []*Order
 	query := `
 		SELECT
-    		o.id, o.quantity, o.amount, o.created_at,
+    		o.id, o.quantity, o.amount, o.created_at, o.status_id,
     		w.name, w.description,
     		t.id, t.currency, t.last_four, t.expire_year, t.expire_month, t.payment_intent_code, t.bank_return_code,
     		s.name, c.email, c.first_name, c.last_name
@@ -101,6 +101,7 @@ func (m *DBModel) GetWidgetOrders() ([]*Order, error) {
 			&o.Quantity,
 			&o.Amount,
 			&o.CreatedAt,
+			&o.StatusID,
 			&o.Widget.Name,
 			&o.Widget.Description,
 			&o.Transaction.ID,
@@ -194,9 +195,9 @@ func (m *DBModel) GetWidgetOrderByID(id int) (*Order, error) {
 
 	query := `
 		SELECT
-    		o.id, o.quantity, o.amount, o.created_at,
+    		o.id, o.quantity, o.amount, o.created_at, o.status_id,
     		w.name, w.description,
-    		t.id, t.currency, t.last_four, t.expire_year, t.expire_month,
+    		t.id, t.currency, t.last_four, t.expire_year, t.expire_month, t.bank_return_code,
     		s.name, c.email, c.first_name, c.last_name
 		FROM orders o
 		LEFT JOIN widgets w on w.id = o.widget_id
@@ -211,6 +212,7 @@ func (m *DBModel) GetWidgetOrderByID(id int) (*Order, error) {
 		&o.Quantity,
 		&o.Amount,
 		&o.CreatedAt,
+		&o.StatusID,
 		&o.Widget.Name,
 		&o.Widget.Description,
 		&o.Transaction.ID,
@@ -218,6 +220,7 @@ func (m *DBModel) GetWidgetOrderByID(id int) (*Order, error) {
 		&o.Transaction.LastFour,
 		&o.Transaction.ExpireYear,
 		&o.Transaction.ExpireMonth,
+		&o.Transaction.BankReturnCode,
 		&o.Status.Name,
 		&o.Customer.Email,
 		&o.Customer.FirstName,
