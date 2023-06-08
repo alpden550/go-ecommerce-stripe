@@ -185,3 +185,89 @@ func (m *DBModel) GetSubscriptionsOrders() ([]*Order, error) {
 
 	return orders, nil
 }
+
+func (m *DBModel) GetWidgetOrderByID(id int) (*Order, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var o Order
+
+	query := `
+		SELECT
+    		o.id, o.quantity, o.amount, o.created_at,
+    		w.name, w.description,
+    		t.id, t.currency, t.last_four, t.expire_year, t.expire_month,
+    		s.name, c.email, c.first_name, c.last_name
+		FROM orders o
+		LEFT JOIN widgets w on w.id = o.widget_id
+		LEFT JOIN transactions t ON t.id = o.transaction_id
+		LEFT JOIN statuses s on s.id = o.status_id
+		LEFT JOIN customers c on c.id = o.customer_id
+		WHERE o.id=$1
+	`
+
+	if err := m.DB.QueryRowContext(ctx, query, id).Scan(
+		&o.ID,
+		&o.Quantity,
+		&o.Amount,
+		&o.CreatedAt,
+		&o.Widget.Name,
+		&o.Widget.Description,
+		&o.Transaction.ID,
+		&o.Transaction.Currency,
+		&o.Transaction.LastFour,
+		&o.Transaction.ExpireYear,
+		&o.Transaction.ExpireMonth,
+		&o.Status.Name,
+		&o.Customer.Email,
+		&o.Customer.FirstName,
+		&o.Customer.LastName,
+	); err != nil {
+		return nil, err
+	}
+
+	return &o, nil
+}
+
+func (m *DBModel) GetSubscriptionOrderByID(id int) (*Order, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var o Order
+
+	query := `
+		SELECT
+    		o.id, o.quantity, o.amount, o.created_at,
+    		sc.name, sc.description,
+    		t.id, t.currency, t.last_four, t.expire_year, t.expire_month,
+    		s.name, c.email, c.first_name, c.last_name
+		FROM orders o
+		LEFT JOIN subscriptions sc on sc.id = o.subscription_id
+		LEFT JOIN transactions t ON t.id = o.transaction_id
+		LEFT JOIN statuses s on s.id = o.status_id
+		LEFT JOIN customers c on c.id = o.customer_id
+		WHERE o.id=$1
+	`
+
+	if err := m.DB.QueryRowContext(ctx, query, id).Scan(
+		&o.ID,
+		&o.Quantity,
+		&o.Amount,
+		&o.CreatedAt,
+		&o.Subscription.Name,
+		&o.Subscription.Description,
+		&o.Transaction.ID,
+		&o.Transaction.Currency,
+		&o.Transaction.LastFour,
+		&o.Transaction.ExpireYear,
+		&o.Transaction.ExpireMonth,
+		&o.Status.Name,
+		&o.Customer.Email,
+		&o.Customer.FirstName,
+		&o.Customer.LastName,
+	); err != nil {
+		return nil, err
+	}
+
+	return &o, nil
+}
