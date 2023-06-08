@@ -3,6 +3,8 @@ package handlers_api
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/alpden550/go-ecommerce-stripe/internal/cards"
+	"github.com/alpden550/go-ecommerce-stripe/internal/helpers"
 	"github.com/go-chi/chi/v5"
 	"net/http"
 	"strconv"
@@ -25,4 +27,40 @@ func GetWidgetByID(writer http.ResponseWriter, request *http.Request) {
 
 	writer.Header().Set("Content-Type", "application/json")
 	_, _ = writer.Write(out)
+}
+
+func RefundWidget(writer http.ResponseWriter, request *http.Request) {
+	var chargeToRefund struct {
+		ID            int    `json:"id"`
+		PaymentIntent string `json:"pi"`
+		Amount        int    `json:"amount"`
+		Currency      string `json:"currency"`
+	}
+
+	if err := helpers.ReadJSON(api, writer, request, &chargeToRefund); err != nil {
+		helpers.BadRequest(api, writer, request, err)
+		return
+	}
+
+	card := cards.Card{
+		Secret:   api.Config.Stripe.Secret,
+		Key:      api.Config.Stripe.Key,
+		Currency: chargeToRefund.Currency,
+	}
+
+	if err := card.Refund(chargeToRefund.PaymentIntent, chargeToRefund.Amount); err != nil {
+		helpers.BadRequest(api, writer, request, err)
+		return
+	}
+
+	response := jsonResponse{
+		OK:      true,
+		Message: "Charge refunded",
+	}
+
+	err := helpers.WriteJSON(api, writer, http.StatusOK, response)
+	if err != nil {
+		return
+	}
+
 }
