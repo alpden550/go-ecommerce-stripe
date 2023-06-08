@@ -31,3 +31,29 @@ func AllSubscriptions(writer http.ResponseWriter, request *http.Request) {
 		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 	}
 }
+
+func ShowSale(writer http.ResponseWriter, request *http.Request) {
+	if err := renders.RenderTemplate(
+		writer,
+		request,
+		"admin/sale.page.gohtml",
+		"sale.page.gohtml",
+		&renders.TemplateData{},
+		"nav",
+	); err != nil {
+		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
+	}
+}
+
+func ShowSubscription(writer http.ResponseWriter, request *http.Request) {
+	if err := renders.RenderTemplate(
+		writer,
+		request,
+		"admin/subscription.page.gohtml",
+		"subscription.page.gohtml",
+		&renders.TemplateData{},
+		"nav",
+	); err != nil {
+		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
+	}
+}
