@@ -27,7 +27,9 @@ func routes() http.Handler {
 		mux.Use(MiddlewareAuth)
 		mux.Get("/virtual-terminal", handlers.VirtualTerminal)
 		mux.Get("/all-sales", handlers.AllSales)
+		mux.Get("/all-sales/{id}", handlers.ShowSale)
 		mux.Get("/all-subscriptions", handlers.AllSubscriptions)
+		mux.Get("/all-subscriptions/{id}", handlers.ShowSubscription)
 	})
 
 	mux.Get("/widgets/{id}", handlers.WidgetChargeOnce)
