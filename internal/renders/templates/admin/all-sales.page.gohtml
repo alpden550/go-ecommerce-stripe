@@ -59,8 +59,11 @@
                         newCell.appendChild(item);
 
                         newCell = newRow.insertCell();
-                        item = document.createTextNode(i.status.name);
-                        newCell.appendChild(item);
+                        if (i.status_id === 2){
+                            newCell.innerHTML = `<span class="badge bg-danger">Refunded</span>`;
+                        } else {
+                            newCell.innerHTML = `<span class="badge bg-success">Charged</span>`;
+                        }
                     })
                 } else {
                     let newRow = tbody.insertRow();
