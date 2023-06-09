@@ -7,6 +7,10 @@
 {{define "content"}}
     <h2 class="mt-5">Order</h2>
     <hr>
+    <span class="badge bg-danger d-none mb-2" id="refunded">Refunded</span>
+    <span class="badge bg-success d-none mb-2" id="charged">Charged</span>
+
+    <div class="alert text-center d-none" id="messages"></div>
     <div>
         <strong>Order No: </strong><span id="order-no"></span><br>
         <strong>Customer: </strong><span id="customer"></span><br>
@@ -18,7 +22,7 @@
     <hr>
 
     <a class="btn btn-info" href="/admin/all-sales">Cancel</a>
-    <a id="refund-btn" class="btn btn-warning" href="#">Refund Order</a>
+    <a id="refund-btn" class="btn btn-warning disabled" href="#">Refund Order</a>
 
     <input type="hidden" id="pi" value="">
     <input type="hidden" id="charge-amount" value="">
@@ -31,6 +35,29 @@
     <script>
         let token = localStorage.getItem("token");
         let id = window.location.pathname.split("/").pop();
+        let messages = document.getElementById("messages");
+
+        function formatCurrency(amount) {
+            let c = parseFloat(amount / 100);
+            return c.toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+            })
+        }
+
+        function showErrors(msg) {
+            messages.innerText = msg;
+            messages.classList.add("alert-danger");
+            messages.classList.remove("alert-success");
+            messages.classList.remove("d-none");
+        }
+
+        function showSuccess(msg) {
+            messages.innerText = msg;
+            messages.classList.add("alert-success");
+            messages.classList.remove("alert-danger");
+            messages.classList.remove("d-none");
+        }
 
         document.addEventListener("DOMContentLoaded", function () {
             const requestOptions = {
@@ -55,17 +82,16 @@
                         document.getElementById("pi").value = data.transaction.payment_intent_code;
                         document.getElementById("charge-amount").value = data.amount;
                         document.getElementById("currency").value = data.transaction.currency;
+
+                        if (data.status_id === 1) {
+                            document.getElementById("charged").classList.remove("d-none");
+                            document.getElementById("refund-btn").classList.remove("disabled");
+                        } else {
+                            document.getElementById("refunded").classList.remove("d-none");
+                        }
                     }
                 })
         })
-
-        function formatCurrency(amount) {
-            let c = parseFloat(amount / 100);
-            return c.toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-            })
-        }
 
         document.getElementById("refund-btn").addEventListener("click", function () {
             Swal.fire({
@@ -97,7 +123,14 @@
                     fetch("{{.API}}/api/admin/all-sales/refund", requestOptions)
                         .then(response => response.json())
                         .then(function (data) {
-                            console.log(data);
+                            if (data.error) {
+                                showErrors(JSON.parse(data.message).message);
+                            } else {
+                                showSuccess("Successfully refunded");
+                                document.getElementById("refund-btn").classList.add("disabled");
+                                document.getElementById("refunded").classList.remove("d-none");
+                                document.getElementById("charged").classList.add("d-none");
+                            }
                         })
                 }
             })
