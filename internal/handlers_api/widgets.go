@@ -2,6 +2,7 @@ package handlers_api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/alpden550/go-ecommerce-stripe/internal/cards"
 	"github.com/alpden550/go-ecommerce-stripe/internal/helpers"
@@ -53,12 +54,18 @@ func RefundWidget(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	err := helpers.UpdateOrderStatus(api, chargeToRefund.ID, 2)
+	if err != nil {
+		helpers.BadRequest(api, writer, request, errors.New("the charge was refunded, but the the database was not updated"))
+		return
+	}
+
 	response := jsonResponse{
 		OK:      true,
 		Message: "Charge refunded",
 	}
 
-	err := helpers.WriteJSON(api, writer, http.StatusOK, response)
+	err = helpers.WriteJSON(api, writer, http.StatusOK, response)
 	if err != nil {
 		return
 	}
