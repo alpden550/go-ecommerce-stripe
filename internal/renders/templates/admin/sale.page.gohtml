@@ -52,7 +52,7 @@
                         document.getElementById("quantity").innerHTML = data.quantity;
                         document.getElementById("amount").innerHTML = formatCurrency(data.amount);
 
-                        document.getElementById("pi").value = data.transaction.bank_return_code;
+                        document.getElementById("pi").value = data.transaction.payment_intent_code;
                         document.getElementById("charge-amount").value = data.amount;
                         document.getElementById("currency").value = data.transaction.currency;
                     }
