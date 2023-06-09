@@ -109,3 +109,13 @@ func GetSubscriptionOrder(app configs.AppConfiger, id int) (*models.Order, error
 
 	return order, nil
 }
+
+func UpdateOrderStatus(app configs.AppConfiger, id, statusId int) error {
+	db := app.GetDB()
+	err := db.SetOrderStatus(id, statusId)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
