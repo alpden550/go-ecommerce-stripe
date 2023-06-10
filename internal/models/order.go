@@ -68,9 +68,11 @@ func (m *DBModel) InsertSubscriptionOrder(order Order) (int, error) {
 	return id, nil
 }
 
-func (m *DBModel) GetWidgetOrders() ([]*Order, error) {
+func (m *DBModel) GetWidgetOrders(pageSize, page int) ([]*Order, int, int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
+
+	offset := (page - 1) * pageSize
 
 	var orders []*Order
 	query := `
@@ -86,11 +88,13 @@ func (m *DBModel) GetWidgetOrders() ([]*Order, error) {
 		LEFT JOIN customers c on c.id = o.customer_id
 		WHERE o.widget_id IS NOT NULL
 		ORDER BY o.created_at DESC
+		LIMIT $1
+		OFFSET $2
 	`
 
-	rows, err := m.DB.QueryContext(ctx, query)
+	rows, err := m.DB.QueryContext(ctx, query, pageSize, offset)
 	if err != nil {
-		return nil, err
+		return nil, 0, 0, err
 	}
 	defer rows.Close()
 
@@ -115,22 +119,34 @@ func (m *DBModel) GetWidgetOrders() ([]*Order, error) {
 			&o.Customer.FirstName,
 			&o.Customer.LastName,
 		); err != nil {
-			return orders, err
+			return orders, 0, 0, err
 		}
 
 		orders = append(orders, &o)
 	}
 
 	if err = rows.Err(); err != nil {
-		return orders, err
+		return orders, 0, 0, err
 	}
 
-	return orders, nil
+	totalQuery := `SELECT count(o.id) FROM orders o WHERE o.widget_id IS NOT NULL`
+	var totalOrders int
+	countRow := m.DB.QueryRowContext(ctx, totalQuery)
+	err = countRow.Scan(&totalOrders)
+	if err != nil {
+		return nil, 0, 0, err
+	}
+
+	lastPage := totalOrders / pageSize
+
+	return orders, lastPage, totalOrders, nil
 }
 
-func (m *DBModel) GetSubscriptionsOrders() ([]*Order, error) {
+func (m *DBModel) GetSubscriptionsOrders(pageSize, page int) ([]*Order, int, int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
+
+	offset := (page - 1) * pageSize
 
 	var orders []*Order
 	query := `
@@ -146,11 +162,13 @@ func (m *DBModel) GetSubscriptionsOrders() ([]*Order, error) {
 		LEFT JOIN customers c on c.id = o.customer_id
 		WHERE o.subscription_id IS NOT NULL
 		ORDER BY o.created_at DESC
+		LIMIT $1
+		OFFSET $2
 	`
 
-	rows, err := m.DB.QueryContext(ctx, query)
+	rows, err := m.DB.QueryContext(ctx, query, pageSize, offset)
 	if err != nil {
-		return nil, err
+		return nil, 0, 0, err
 	}
 	defer rows.Close()
 
@@ -174,17 +192,27 @@ func (m *DBModel) GetSubscriptionsOrders() ([]*Order, error) {
 			&o.Customer.FirstName,
 			&o.Customer.LastName,
 		); err != nil {
-			return orders, err
+			return orders, 0, 0, err
 		}
 
 		orders = append(orders, &o)
 	}
 
 	if err = rows.Err(); err != nil {
-		return orders, err
+		return orders, 0, 0, err
 	}
 
-	return orders, nil
+	totalQuery := `SELECT count(o.id) FROM orders o WHERE o.subscription_id IS NOT NULL`
+	var totalOrders int
+	countRow := m.DB.QueryRowContext(ctx, totalQuery)
+	err = countRow.Scan(&totalOrders)
+	if err != nil {
+		return nil, 0, 0, err
+	}
+
+	lastPage := totalOrders / pageSize
+
+	return orders, lastPage, totalOrders, nil
 }
 
 func (m *DBModel) GetWidgetOrderByID(id int) (*Order, error) {
