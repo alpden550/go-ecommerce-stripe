@@ -239,9 +239,9 @@ func (m *DBModel) GetSubscriptionOrderByID(id int) (*Order, error) {
 
 	query := `
 		SELECT
-    		o.id, o.quantity, o.amount, o.created_at,
+    		o.id, o.quantity, o.amount, o.created_at, o.status_id,
     		sc.name, sc.description,
-    		t.id, t.currency, t.last_four, t.expire_year, t.expire_month,
+    		t.id, t.currency, t.last_four, t.expire_year, t.expire_month, t.subscription_code,
     		s.name, c.email, c.first_name, c.last_name
 		FROM orders o
 		LEFT JOIN subscriptions sc on sc.id = o.subscription_id
@@ -256,6 +256,7 @@ func (m *DBModel) GetSubscriptionOrderByID(id int) (*Order, error) {
 		&o.Quantity,
 		&o.Amount,
 		&o.CreatedAt,
+		&o.StatusID,
 		&o.Subscription.Name,
 		&o.Subscription.Description,
 		&o.Transaction.ID,
@@ -263,6 +264,7 @@ func (m *DBModel) GetSubscriptionOrderByID(id int) (*Order, error) {
 		&o.Transaction.LastFour,
 		&o.Transaction.ExpireYear,
 		&o.Transaction.ExpireMonth,
+		&o.Transaction.SubscriptionCode,
 		&o.Status.Name,
 		&o.Customer.Email,
 		&o.Customer.FirstName,
