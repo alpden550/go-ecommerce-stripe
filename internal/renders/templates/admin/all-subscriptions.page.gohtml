@@ -58,8 +58,8 @@
                         newCell.appendChild(item);
 
                         newCell = newRow.insertCell();
-                        if (i.status_id === 2) {
-                            newCell.innerHTML = `<span class="badge bg-danger">Refunded</span>`;
+                        if (i.status_id === 3) {
+                            newCell.innerHTML = `<span class="badge bg-danger">Cancelled</span>`;
                         } else {
                             newCell.innerHTML = `<span class="badge bg-success">Charged</span>`;
                         }
