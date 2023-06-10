@@ -6,6 +6,7 @@ import (
 	"github.com/alpden550/go-ecommerce-stripe/internal/cards"
 	"github.com/alpden550/go-ecommerce-stripe/internal/helpers"
 	"github.com/alpden550/go-ecommerce-stripe/internal/models"
+	"github.com/stripe/stripe-go/v74"
 	"net/http"
 	"strconv"
 )
@@ -19,6 +20,7 @@ func Subscribe(w http.ResponseWriter, r *http.Request) {
 	}
 
 	okay := true
+	var subscription *stripe.Subscription
 	transactionMessage := "Transaction successful"
 
 	card := cards.Card{
@@ -34,7 +36,7 @@ func Subscribe(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if okay {
-		_, err = card.SubscribeToPlan(stripeCustomer, payload.PlanID, payload.Email, payload.LastFour, "")
+		subscription, err = card.SubscribeToPlan(stripeCustomer, payload.PlanID, payload.Email, payload.LastFour, "")
 		if err != nil {
 			api.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 			okay = false
@@ -58,6 +60,8 @@ func Subscribe(w http.ResponseWriter, r *http.Request) {
 			ExpireMonth:         payload.ExpireMonth,
 			ExpireYear:          payload.ExpireYear,
 			TransactionStatusID: 2,
+			SubscriptionCode:    subscription.ID,
+			PaymentMethodCode:   payload.PaymentMethod,
 		}
 		transactionID, err := helpers.SaveTransaction(api, transaction)
 		if err != nil {
