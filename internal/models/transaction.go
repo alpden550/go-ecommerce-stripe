@@ -21,6 +21,7 @@ type Transaction struct {
 	BankReturnCode      string    `json:"bank_return_code"`
 	PaymentMethodCode   string    `json:"payment_method_code"`
 	PaymentIntentCode   string    `json:"payment_intent_code"`
+	SubscriptionCode    string    `json:"subscription_code"`
 	TransactionStatusID int       `json:"transaction_status_id"`
 	CreatedAt           time.Time `json:"-"`
 	UpdatedAt           time.Time `json:"-"`
@@ -39,9 +40,10 @@ func (m *DBModel) InsertTransaction(t Transaction) (int, error) {
 		     expire_month,
 		     expire_year,
 		     payment_method_code,
-		     payment_intent_code
+		     payment_intent_code,
+		     subscription_code
 		     )
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 		RETURNING id
 	`
 
@@ -56,6 +58,7 @@ func (m *DBModel) InsertTransaction(t Transaction) (int, error) {
 		t.ExpireYear,
 		t.PaymentMethodCode,
 		t.PaymentIntentCode,
+		t.SubscriptionCode,
 	).Scan(&id)
 	if err != nil {
 		return 0, err
