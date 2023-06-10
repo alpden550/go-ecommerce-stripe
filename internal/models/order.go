@@ -135,7 +135,7 @@ func (m *DBModel) GetSubscriptionsOrders() ([]*Order, error) {
 	var orders []*Order
 	query := `
 		SELECT
-    		o.id, o.quantity, o.amount, o.created_at,
+    		o.id, o.quantity, o.amount, o.created_at, o.status_id,
     		sc.name, sc.description,
     		t.id, t.currency, t.last_four, t.expire_year, t.expire_month,
     		s.name, c.email, c.first_name, c.last_name
@@ -161,6 +161,7 @@ func (m *DBModel) GetSubscriptionsOrders() ([]*Order, error) {
 			&o.Quantity,
 			&o.Amount,
 			&o.CreatedAt,
+			&o.StatusID,
 			&o.Subscription.Name,
 			&o.Subscription.Description,
 			&o.Transaction.ID,
