@@ -70,24 +70,24 @@ func SaveToken(app configs.AppConfiger, token *models.Token, user *models.User) 
 	return nil
 }
 
-func FetchAllWidgetOrder(app configs.AppConfiger) ([]*models.Order, error) {
+func FetchAllWidgetOrder(app configs.AppConfiger, pageSize, page int) ([]*models.Order, int, int, error) {
 	db := app.GetDB()
-	orders, err := db.GetWidgetOrders()
+	orders, lastPage, totalOrders, err := db.GetWidgetOrders(pageSize, page)
 	if err != nil {
-		return nil, err
+		return nil, 0, 0, err
 	}
 
-	return orders, nil
+	return orders, lastPage, totalOrders, nil
 }
 
-func FetchAllSubscriptionsOrder(app configs.AppConfiger) ([]*models.Order, error) {
+func FetchAllSubscriptionsOrder(app configs.AppConfiger, pageSize, page int) ([]*models.Order, int, int, error) {
 	db := app.GetDB()
-	orders, err := db.GetSubscriptionsOrders()
+	orders, lastPage, totalOrders, err := db.GetSubscriptionsOrders(pageSize, page)
 	if err != nil {
-		return nil, err
+		return nil, 0, 0, err
 	}
 
-	return orders, nil
+	return orders, lastPage, totalOrders, nil
 }
 
 func GetWidgetOrder(app configs.AppConfiger, id int) (*models.Order, error) {
