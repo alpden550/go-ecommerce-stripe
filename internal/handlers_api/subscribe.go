@@ -2,6 +2,7 @@ package handlers_api
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/alpden550/go-ecommerce-stripe/internal/cards"
 	"github.com/alpden550/go-ecommerce-stripe/internal/helpers"
@@ -101,4 +102,46 @@ func Subscribe(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "application/json")
 	_, _ = w.Write(out)
+}
+
+func CancelSubscription(writer http.ResponseWriter, request *http.Request) {
+	var subscription struct {
+		ID               int    `json:"id"`
+		SubscriptionCode string `json:"sc"`
+		Currency         string `json:"currency"`
+	}
+
+	if err := helpers.ReadJSON(api, writer, request, &subscription); err != nil {
+		helpers.BadRequest(api, writer, request, err)
+		return
+	}
+
+	card := cards.Card{
+		Secret:   api.Config.Stripe.Secret,
+		Key:      api.Config.Stripe.Key,
+		Currency: subscription.Currency,
+	}
+
+	err := card.CancelSubscription(subscription.SubscriptionCode)
+	if err != nil {
+		helpers.BadRequest(api, writer, request, err)
+		return
+	}
+
+	err = helpers.UpdateOrderStatus(api, subscription.ID, 3)
+	if err != nil {
+		helpers.BadRequest(api, writer, request, errors.New("the subscription was cancelled, but the the database was not updated"))
+		return
+	}
+
+	response := jsonResponse{
+		OK:      true,
+		Message: "Subscription was cancelled",
+	}
+
+	err = helpers.WriteJSON(api, writer, http.StatusOK, response)
+	if err != nil {
+		return
+	}
+
 }
