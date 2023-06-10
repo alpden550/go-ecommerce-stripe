@@ -37,6 +37,7 @@ func routes() http.Handler {
 		mux.Post("/all-sales/refund", handlers.RefundWidget)
 		mux.Get("/all-subscriptions", handlers.AllSubscriptions)
 		mux.Get("/all-subscriptions/{id}", handlers.GetSubscription)
+		mux.Post("/all-subscriptions/cancel", handlers.CancelSubscription)
 	})
 
 	return mux
