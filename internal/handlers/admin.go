@@ -13,7 +13,7 @@ func AllSales(writer http.ResponseWriter, request *http.Request) {
 		"admin/all-sales.page.gohtml",
 		"all-sales.page.gohtml",
 		&renders.TemplateData{},
-		"nav",
+		"nav", "order-js",
 	); err != nil {
 		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 	}
@@ -26,7 +26,7 @@ func AllSubscriptions(writer http.ResponseWriter, request *http.Request) {
 		"admin/all-subscriptions.page.gohtml",
 		"all-subscriptions.page.gohtml",
 		&renders.TemplateData{},
-		"nav",
+		"nav", "order-js",
 	); err != nil {
 		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 	}
