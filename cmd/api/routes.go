@@ -40,5 +40,10 @@ func routes() http.Handler {
 		mux.Post("/all-subscriptions/cancel", handlers.CancelSubscription)
 	})
 
+	mux.Route("/api/admin/users", func(mux chi.Router) {
+		mux.Use(MiddlewareAuth)
+		mux.Get("/all-users", handlers.AllUsers)
+	})
+
 	return mux
 }
