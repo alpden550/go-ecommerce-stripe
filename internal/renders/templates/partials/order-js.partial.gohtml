@@ -1,0 +1,35 @@
+{{define "order-js"}}
+    <script>
+        function formatCurrency(amount) {
+            let c = parseFloat(amount / 100);
+            return c.toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+            })
+        }
+
+        function paginator(pages, curPage) {
+            let paginator = document.getElementById("paginator");
+            let html = `<li class="page-item"><a href="#!" class="page-link pager" data-page="${curPage - 1}">&lt;</a></li>`;
+
+            for (let i = 0; i <= pages; i++) {
+                html += `<li class="page-item"><a href="#!" class="page-link pager" data-page="${i + 1}">${i + 1}</a></li>`;
+            }
+
+            html += `<li class="page-item"><a href="#!" class="page-link pager" data-page="${curPage + 1}">&gt;</a></li>`;
+
+            paginator.innerHTML = html;
+
+            let pageBtns = document.getElementsByClassName("pager");
+            for (let j = 0; j < pageBtns.length; j++) {
+                pageBtns[j].addEventListener("click", function (evt) {
+                    let desiredPage = evt.target.getAttribute("data-page");
+                    if ((desiredPage > 0) && (desiredPage <= pages + 1)) {
+                        updateSales(pageSize, desiredPage);
+                    }
+                })
+            }
+        }
+
+    </script>
+{{end}}
