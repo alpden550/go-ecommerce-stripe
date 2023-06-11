@@ -50,3 +50,52 @@ func UpdateUserPassword(app configs.AppConfiger, user *models.User, hash string)
 
 	return nil
 }
+
+func FetchAllUsers(app configs.AppConfiger) ([]*models.User, error) {
+	db := app.GetDB()
+	users, err := db.GetAllUsers()
+	if err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}
+
+func FetchUserByID(app configs.AppConfiger, id int) (*models.User, error) {
+	db := app.GetDB()
+	user, err := db.GetUserByID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}
+
+func EditUser(app configs.AppConfiger, user *models.User) error {
+	db := app.GetDB()
+	if err := db.UpdateUser(user); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func SaveUser(app configs.AppConfiger, user *models.User, hash string) (int, error) {
+	db := app.GetDB()
+	id, err := db.AddUser(user, hash)
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}
+
+func RemoveUser(app configs.AppConfiger, id int) error {
+	db := app.GetDB()
+	err := db.DeleteUser(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
