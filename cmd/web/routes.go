@@ -32,6 +32,12 @@ func routes() http.Handler {
 		mux.Get("/all-subscriptions/{id}", handlers.ShowSubscription)
 	})
 
+	mux.Route("/admin/users", func(mux chi.Router) {
+		mux.Use(MiddlewareAuth)
+		mux.Get("/all-users", handlers.ShowAllUsers)
+		mux.Get("/all-users/{id}", handlers.ShowUser)
+	})
+
 	mux.Get("/widgets/{id}", handlers.WidgetChargeOnce)
 	mux.Post("/widgets/payment-succeeded", handlers.WidgetPaymentSucceed)
 	mux.Get("/widgets/receipt", handlers.WidgetShowReceipt)
