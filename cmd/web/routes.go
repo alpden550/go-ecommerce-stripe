@@ -14,6 +14,7 @@ func routes() http.Handler {
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
 
 	mux.Get("/", handlers.IndexPage)
+	mux.Get("/ws", handlers.WsHandler)
 
 	mux.Route("/auth", func(mux chi.Router) {
 		mux.Get("/login", handlers.Login)
