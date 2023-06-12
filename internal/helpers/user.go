@@ -42,6 +42,16 @@ func FetchUserByToken(app configs.AppConfiger, token string) (*models.User, erro
 	return user, nil
 }
 
+func DeleteTokenByUserID(app configs.AppConfiger, usrerID int) error {
+	db := app.GetDB()
+	err := db.DeleteToken(usrerID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func UpdateUserPassword(app configs.AppConfiger, user *models.User, hash string) error {
 	db := app.GetDB()
 	if err := db.SetUserPassword(user, hash); err != nil {
