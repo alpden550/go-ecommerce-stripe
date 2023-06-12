@@ -43,6 +43,8 @@ func routes() http.Handler {
 	mux.Route("/api/admin/users", func(mux chi.Router) {
 		mux.Use(MiddlewareAuth)
 		mux.Get("/all-users", handlers.AllUsers)
+		mux.Get("/{id}", handlers.OneUser)
+		mux.Post("/edit/{id}", handlers.EditUser)
 	})
 
 	return mux
