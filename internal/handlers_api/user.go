@@ -103,3 +103,24 @@ func EditUser(writer http.ResponseWriter, request *http.Request) {
 	}
 
 }
+
+func DeleteUser(writer http.ResponseWriter, request *http.Request) {
+	id := chi.URLParam(request, "id")
+	userID, err := strconv.Atoi(id)
+	if err != nil {
+		helpers.BadRequest(api, writer, request, err)
+		return
+	}
+
+	err = helpers.RemoveUser(api, userID)
+	if err != nil {
+		helpers.BadRequest(api, writer, request, err)
+		return
+	}
+
+	response := jsonResponse{OK: true}
+	err = helpers.WriteJSON(api, writer, http.StatusOK, response)
+	if err != nil {
+		helpers.BadRequest(api, writer, request, err)
+	}
+}
