@@ -48,6 +48,8 @@ func main() {
 	}
 	defer conn.Close()
 
+	go handlers.ListenToWsChannel()
+
 	err = serveApp(app)
 	if err != nil {
 		app.ErrorLog.Printf("%e", err)
