@@ -35,6 +35,7 @@ func AddDefaultData(td *TemplateData, r *http.Request) *TemplateData {
 
 	if app.Session.Exists(r.Context(), "userId") {
 		td.IsAuthenticated = 1
+		td.UserID = app.Session.GetInt(r.Context(), "userId")
 	} else {
 		td.IsAuthenticated = 0
 	}
