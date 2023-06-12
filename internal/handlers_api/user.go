@@ -117,6 +117,11 @@ func DeleteUser(writer http.ResponseWriter, request *http.Request) {
 		helpers.BadRequest(api, writer, request, err)
 		return
 	}
+	err = helpers.DeleteTokenByUserID(api, userID)
+	if err != nil {
+		helpers.BadRequest(api, writer, request, err)
+		return
+	}
 
 	response := jsonResponse{OK: true}
 	err = helpers.WriteJSON(api, writer, http.StatusOK, response)
