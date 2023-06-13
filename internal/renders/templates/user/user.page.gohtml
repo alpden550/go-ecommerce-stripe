@@ -163,7 +163,14 @@
                             if (!data.ok) {
                                 Swal.fire("Error: " + data.message);
                             } else {
-                                location.href = "/admin/users/all-users";
+                                let jsonData = {
+                                    action: "deleteUser",
+                                    user_id: parseInt(id, 10),
+                                }
+
+                                socket.send(JSON.stringify(jsonData));
+
+                                location.href="/admin/users/all-users";
                             }
                         })
                 }
