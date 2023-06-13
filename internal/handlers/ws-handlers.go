@@ -11,11 +11,12 @@ type WebSocketConnection struct {
 }
 
 type WSPayload struct {
-	Action      string               `json:"action"`
-	UserName    string               `json:"user_name"`
-	Message     string               `json:"message"`
-	MessageType string               `json:"message_type"`
-	Conn        *WebSocketConnection `json:"-"`
+	Action      string              `json:"action"`
+	Message     string              `json:"message"`
+	UserName    string              `json:"user_name"`
+	MessageType string              `json:"message_type"`
+	UserID      int                 `json:"user_id"`
+	Conn        WebSocketConnection `json:"-"`
 }
 
 type WSJsonResponse struct {
@@ -27,7 +28,7 @@ type WSJsonResponse struct {
 var upgradeConnection = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
-	CheckOrigin:     func(request *http.Request) bool { return true },
+	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
 var clients = make(map[WebSocketConnection]string)
@@ -60,7 +61,7 @@ func WsHandler(writer http.ResponseWriter, request *http.Request) {
 func listenForWS(conn *WebSocketConnection) {
 	defer func() {
 		if r := recover(); r != nil {
-			app.ErrorLog.Printf("ERROR: %v", r)
+			app.ErrorLog.Println("ERROR:", fmt.Sprintf("%v", r))
 		}
 	}()
 
@@ -69,9 +70,9 @@ func listenForWS(conn *WebSocketConnection) {
 	for {
 		err := conn.ReadJSON(&payload)
 		if err != nil {
-			app.ErrorLog.Printf("%w", fmt.Errorf("%e", err))
+			// do nothing
 		} else {
-			payload.Conn = conn
+			payload.Conn = *conn
 			wsChan <- payload
 		}
 	}
@@ -86,6 +87,7 @@ func ListenToWsChannel() {
 		case "deleteUser":
 			response.Action = "logout"
 			response.Message = "Your account has been deleted"
+			response.UserID = e.UserID
 			broadcastToAll(response)
 
 		default:
