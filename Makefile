@@ -1,8 +1,9 @@
 GOSTRIPE_PORT=4000
 API_PORT=4001
+INVOICE_PORT=5001
 
 ## build: builds all binaries
-build: clean build_front build_back
+build: clean build_front build_back build_invoice
 	@printf "All binaries built!\n"
 
 ## clean: cleans all binaries and runs go clean
@@ -24,8 +25,13 @@ build_back:
 	@go build -o dist/gostripe_api ./cmd/api
 	@echo "Back end built!"
 
+build_invoice:
+	@echo "Building invoice microservice..."
+	@go build -o dist/gostripe_invoice ./cmd/micro/invoicer
+	@echo "Invoicer built!"
+
 ## start: starts front and back end
-start: db start_front start_back
+start: db start_front start_back start_invoice
 
 ## start_front: starts the front end
 start_front: build_front
@@ -39,8 +45,13 @@ start_back: build_back
 	./dist/gostripe_api -port=${API_PORT} &
 	@echo "Back end running!"
 
+start_invoice: build_invoice
+	@echo "Starting the Invoice microservice..."
+	./dist/gostripe_invoice -port=${INVOICE_PORT} &
+	@echo "Back end running!"
+
 ## stop: stops the front and back end
-stop: stop_front stop_back stop_db
+stop: stop_front stop_back stop_db stop_invoice
 	@echo "All applications stopped"
 
 ## stop_front: stops the front end
@@ -55,6 +66,11 @@ stop_back:
 	@-pkill -SIGTERM -f "gostripe_api -port=${API_PORT}"
 	@echo "Stopped back end"
 
+stop_invoice:
+	@echo "Stopping the invoicer..."
+	@-pkill -SIGTERM -f "gostripe_invoice -port=${INVOICE_PORT}"
+	@echo "Stopped invoicer"
+
 db:
 	@echo "Starting the postgres..."
 	docker-compose up db -d
@@ -68,3 +84,6 @@ air_api:
 
 air_app:
 	air -c .air-app.toml
+
+air_invoice:
+	air -c .air-invoice.toml
