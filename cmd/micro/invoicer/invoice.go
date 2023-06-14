@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/alpden550/go-ecommerce-stripe/internal/helpers"
 	"log"
 	"net/http"
 	"os"
@@ -45,6 +46,11 @@ func main() {
 		InfoLog:  infoLog,
 		ErrorLog: errorLog,
 		Version:  version,
+	}
+
+	err = helpers.CreateDir("./invoices")
+	if err != nil {
+		return
 	}
 
 	err = serve()
