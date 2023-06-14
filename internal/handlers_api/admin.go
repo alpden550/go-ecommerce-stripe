@@ -22,14 +22,14 @@ var orderResponse struct {
 }
 
 func AllSales(writer http.ResponseWriter, request *http.Request) {
-	if err := helpers.ReadJSON(api, writer, request, &orderPayload); err != nil {
-		helpers.BadRequest(api, writer, request, err)
+	if err := helpers.ReadJSON(writer, request, &orderPayload); err != nil {
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 
 	orders, lastPage, totalOrders, err := helpers.FetchAllWidgetOrder(api, orderPayload.PageSize, orderPayload.CurrentPage)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 
@@ -39,9 +39,9 @@ func AllSales(writer http.ResponseWriter, request *http.Request) {
 	orderResponse.TotalOrders = totalOrders
 	orderResponse.Orders = orders
 
-	err = helpers.WriteJSON(api, writer, http.StatusOK, orderResponse)
+	err = helpers.WriteJSON(writer, http.StatusOK, orderResponse)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 }
@@ -49,31 +49,31 @@ func AllSales(writer http.ResponseWriter, request *http.Request) {
 func GetSale(writer http.ResponseWriter, request *http.Request) {
 	orderId, err := strconv.Atoi(chi.URLParam(request, "id"))
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 
 	order, err := helpers.GetWidgetOrder(api, orderId)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 
-	err = helpers.WriteJSON(api, writer, http.StatusOK, order)
+	err = helpers.WriteJSON(writer, http.StatusOK, order)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 }
 
 func AllSubscriptions(writer http.ResponseWriter, request *http.Request) {
-	if err := helpers.ReadJSON(api, writer, request, &orderPayload); err != nil {
-		helpers.BadRequest(api, writer, request, err)
+	if err := helpers.ReadJSON(writer, request, &orderPayload); err != nil {
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 	orders, lastPage, totalOrders, err := helpers.FetchAllSubscriptionsOrder(api, orderPayload.PageSize, orderPayload.CurrentPage)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 
@@ -83,9 +83,9 @@ func AllSubscriptions(writer http.ResponseWriter, request *http.Request) {
 	orderResponse.TotalOrders = totalOrders
 	orderResponse.Orders = orders
 
-	err = helpers.WriteJSON(api, writer, http.StatusOK, orderResponse)
+	err = helpers.WriteJSON(writer, http.StatusOK, orderResponse)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 }
@@ -93,19 +93,19 @@ func AllSubscriptions(writer http.ResponseWriter, request *http.Request) {
 func GetSubscription(writer http.ResponseWriter, request *http.Request) {
 	orderId, err := strconv.Atoi(chi.URLParam(request, "id"))
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 
 	order, err := helpers.GetSubscriptionOrder(api, orderId)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 
-	err = helpers.WriteJSON(api, writer, http.StatusOK, order)
+	err = helpers.WriteJSON(writer, http.StatusOK, order)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 }

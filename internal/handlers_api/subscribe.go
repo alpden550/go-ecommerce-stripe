@@ -111,8 +111,8 @@ func CancelSubscription(writer http.ResponseWriter, request *http.Request) {
 		Currency         string `json:"currency"`
 	}
 
-	if err := helpers.ReadJSON(api, writer, request, &subscription); err != nil {
-		helpers.BadRequest(api, writer, request, err)
+	if err := helpers.ReadJSON(writer, request, &subscription); err != nil {
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 
@@ -124,13 +124,13 @@ func CancelSubscription(writer http.ResponseWriter, request *http.Request) {
 
 	err := card.CancelSubscription(subscription.SubscriptionCode)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 
 	err = helpers.UpdateOrderStatus(api, subscription.ID, 3)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, errors.New("the subscription was cancelled, but the the database was not updated"))
+		helpers.BadRequest(writer, request, errors.New("the subscription was cancelled, but the the database was not updated"))
 		return
 	}
 
@@ -139,7 +139,7 @@ func CancelSubscription(writer http.ResponseWriter, request *http.Request) {
 		Message: "Subscription was cancelled",
 	}
 
-	err = helpers.WriteJSON(api, writer, http.StatusOK, response)
+	err = helpers.WriteJSON(writer, http.StatusOK, response)
 	if err != nil {
 		return
 	}

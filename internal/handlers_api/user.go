@@ -13,13 +13,13 @@ import (
 func AllUsers(writer http.ResponseWriter, request *http.Request) {
 	users, err := helpers.FetchAllUsers(api)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 
-	err = helpers.WriteJSON(api, writer, http.StatusOK, users)
+	err = helpers.WriteJSON(writer, http.StatusOK, users)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 	}
 }
 
@@ -27,19 +27,19 @@ func OneUser(writer http.ResponseWriter, request *http.Request) {
 	id := chi.URLParam(request, "id")
 	userID, err := strconv.Atoi(id)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 
 	user, err := helpers.FetchUserByID(api, userID)
 	if err != nil {
-		helpers.WriteJSON(api, writer, http.StatusNotFound, err)
+		helpers.WriteJSON(writer, http.StatusNotFound, err)
 		return
 	}
 
-	err = helpers.WriteJSON(api, writer, http.StatusOK, user)
+	err = helpers.WriteJSON(writer, http.StatusOK, user)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 	}
 }
 
@@ -47,14 +47,14 @@ func EditUser(writer http.ResponseWriter, request *http.Request) {
 	id := chi.URLParam(request, "id")
 	userID, err := strconv.Atoi(id)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 
 	var user models.User
-	err = helpers.ReadJSON(api, writer, request, &user)
+	err = helpers.ReadJSON(writer, request, &user)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 
@@ -65,20 +65,20 @@ func EditUser(writer http.ResponseWriter, request *http.Request) {
 	if userID > 0 {
 		err = helpers.EditUser(api, &user)
 		if err != nil {
-			helpers.BadRequest(api, writer, request, err)
+			helpers.BadRequest(writer, request, err)
 			return
 		}
 
 		if user.Password != "" {
 			newHash, err := bcrypt.GenerateFromPassword([]byte(user.Password), 12)
 			if err != nil {
-				helpers.BadRequest(api, writer, request, err)
+				helpers.BadRequest(writer, request, err)
 				return
 			}
 
 			err = helpers.UpdateUserPassword(api, &user, string(newHash))
 			if err != nil {
-				helpers.BadRequest(api, writer, request, err)
+				helpers.BadRequest(writer, request, err)
 				return
 			}
 		}
@@ -86,20 +86,20 @@ func EditUser(writer http.ResponseWriter, request *http.Request) {
 	} else {
 		newHash, err := bcrypt.GenerateFromPassword([]byte(user.Password), 12)
 		if err != nil {
-			helpers.BadRequest(api, writer, request, err)
+			helpers.BadRequest(writer, request, err)
 			return
 		}
 		newUserId, err := helpers.SaveUser(api, &user, string(newHash))
 		if err != nil {
-			helpers.BadRequest(api, writer, request, err)
+			helpers.BadRequest(writer, request, err)
 			return
 		}
 		response.Message = fmt.Sprintf("Added user %d", newUserId)
 	}
 
-	err = helpers.WriteJSON(api, writer, http.StatusOK, response)
+	err = helpers.WriteJSON(writer, http.StatusOK, response)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 	}
 
 }
@@ -108,24 +108,24 @@ func DeleteUser(writer http.ResponseWriter, request *http.Request) {
 	id := chi.URLParam(request, "id")
 	userID, err := strconv.Atoi(id)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 
 	err = helpers.RemoveUser(api, userID)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 	err = helpers.DeleteTokenByUserID(api, userID)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 
 	response := jsonResponse{OK: true}
-	err = helpers.WriteJSON(api, writer, http.StatusOK, response)
+	err = helpers.WriteJSON(writer, http.StatusOK, response)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 	}
 }

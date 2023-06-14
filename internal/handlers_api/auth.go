@@ -20,8 +20,8 @@ func CreateAuthToken(writer http.ResponseWriter, request *http.Request) {
 		Password string `json:"password"`
 	}
 
-	if err := helpers.ReadJSON(api, writer, request, &userInput); err != nil {
-		_ = helpers.BadRequest(api, writer, request, err)
+	if err := helpers.ReadJSON(writer, request, &userInput); err != nil {
+		_ = helpers.BadRequest(writer, request, err)
 		return
 	}
 
@@ -39,12 +39,12 @@ func CreateAuthToken(writer http.ResponseWriter, request *http.Request) {
 
 	token, err := models.GenerateNewToken(user.ID, 24*time.Hour, models.ScopeAuthentication)
 	if err != nil {
-		_ = helpers.BadRequest(api, writer, request, err)
+		_ = helpers.BadRequest(writer, request, err)
 		return
 	}
 	err = helpers.SaveToken(api, token, &user)
 	if err != nil {
-		_ = helpers.BadRequest(api, writer, request, err)
+		_ = helpers.BadRequest(writer, request, err)
 		return
 	}
 
@@ -56,7 +56,7 @@ func CreateAuthToken(writer http.ResponseWriter, request *http.Request) {
 	payload.Error = false
 	payload.Message = fmt.Sprintf("token for %s created", user.Email)
 	payload.Token = token
-	err = helpers.WriteJSON(api, writer, http.StatusOK, payload)
+	err = helpers.WriteJSON(writer, http.StatusOK, payload)
 	if err != nil {
 		return
 	}
@@ -74,7 +74,7 @@ func CheckAuthentication(writer http.ResponseWriter, request *http.Request) {
 	}
 	payload.Error = false
 	payload.Message = fmt.Sprintf("authenticated user %s", user.Email)
-	err = helpers.WriteJSON(api, writer, http.StatusOK, payload)
+	err = helpers.WriteJSON(writer, http.StatusOK, payload)
 }
 
 func AuthenticateToken(request *http.Request) (*models.User, error) {
@@ -106,8 +106,8 @@ func SendPasswordResetEmail(writer http.ResponseWriter, request *http.Request) {
 		Email string `json:"email"`
 	}
 
-	if err := helpers.ReadJSON(api, writer, request, &payload); err != nil {
-		_ = helpers.BadRequest(api, writer, request, err)
+	if err := helpers.ReadJSON(writer, request, &payload); err != nil {
+		_ = helpers.BadRequest(writer, request, err)
 		return
 	}
 
@@ -116,7 +116,7 @@ func SendPasswordResetEmail(writer http.ResponseWriter, request *http.Request) {
 			OK:      false,
 			Message: "no matching email found",
 		}
-		_ = helpers.WriteJSON(api, writer, http.StatusAccepted, response)
+		_ = helpers.WriteJSON(writer, http.StatusAccepted, response)
 		return
 	}
 
@@ -139,14 +139,14 @@ func SendPasswordResetEmail(writer http.ResponseWriter, request *http.Request) {
 		data,
 	); err != nil {
 		api.ErrorLog.Printf("%w", fmt.Errorf("%e", err))
-		_ = helpers.BadRequest(api, writer, request, err)
+		_ = helpers.BadRequest(writer, request, err)
 	}
 
 	response := jsonResponse{
 		OK:      true,
 		Message: "sent",
 	}
-	_ = helpers.WriteJSON(api, writer, http.StatusOK, response)
+	_ = helpers.WriteJSON(writer, http.StatusOK, response)
 }
 
 func ResetPassword(writer http.ResponseWriter, request *http.Request) {
@@ -155,32 +155,32 @@ func ResetPassword(writer http.ResponseWriter, request *http.Request) {
 		Password string `json:"password"`
 	}
 
-	if err := helpers.ReadJSON(api, writer, request, &payload); err != nil {
-		_ = helpers.BadRequest(api, writer, request, err)
+	if err := helpers.ReadJSON(writer, request, &payload); err != nil {
+		_ = helpers.BadRequest(writer, request, err)
 		return
 	}
 
 	encryptor := encryption.Encryption{Key: []byte(api.Config.SecretKey)}
 	realEmail, err := encryptor.Decrypt(payload.Email)
 	if err != nil {
-		_ = helpers.BadRequest(api, writer, request, err)
+		_ = helpers.BadRequest(writer, request, err)
 		return
 	}
 
 	user, err := helpers.FetchUserByEmail(api, realEmail)
 	if err != nil {
-		_ = helpers.BadRequest(api, writer, request, err)
+		_ = helpers.BadRequest(writer, request, err)
 		return
 	}
 
 	newHashedPassword, err := bcrypt.GenerateFromPassword([]byte(payload.Password), 12)
 	if err != nil {
-		_ = helpers.BadRequest(api, writer, request, err)
+		_ = helpers.BadRequest(writer, request, err)
 		return
 	}
 
 	if err = helpers.UpdateUserPassword(api, &user, string(newHashedPassword)); err != nil {
-		_ = helpers.BadRequest(api, writer, request, err)
+		_ = helpers.BadRequest(writer, request, err)
 		return
 	}
 
@@ -188,5 +188,5 @@ func ResetPassword(writer http.ResponseWriter, request *http.Request) {
 		OK:      true,
 		Message: "Password was changed",
 	}
-	_ = helpers.WriteJSON(api, writer, http.StatusCreated, response)
+	_ = helpers.WriteJSON(writer, http.StatusCreated, response)
 }

@@ -74,8 +74,8 @@ func VirtualTerminalPaymentSucceeded(writer http.ResponseWriter, request *http.R
 		LastFour        string `json:"last_four"`
 	}
 
-	if err := helpers.ReadJSON(api, writer, request, &paymentData); err != nil {
-		helpers.BadRequest(api, writer, request, err)
+	if err := helpers.ReadJSON(writer, request, &paymentData); err != nil {
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 
@@ -85,13 +85,13 @@ func VirtualTerminalPaymentSucceeded(writer http.ResponseWriter, request *http.R
 	}
 	pi, err := card.GetPaymentIntent(paymentData.PaymentIntent)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 
 	pm, err := card.GetPaymentMethod(paymentData.PaymentMethod)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 
@@ -113,9 +113,9 @@ func VirtualTerminalPaymentSucceeded(writer http.ResponseWriter, request *http.R
 
 	_, err = helpers.SaveTransaction(api, transaction)
 	if err != nil {
-		helpers.BadRequest(api, writer, request, err)
+		helpers.BadRequest(writer, request, err)
 		return
 	}
 
-	helpers.WriteJSON(api, writer, http.StatusOK, paymentData)
+	helpers.WriteJSON(writer, http.StatusOK, paymentData)
 }

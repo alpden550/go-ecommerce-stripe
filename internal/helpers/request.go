@@ -13,7 +13,7 @@ type JsonPayload struct {
 	Message string `json:"message"`
 }
 
-func ReadJSON(app configs.AppConfiger, writer http.ResponseWriter, request *http.Request, data interface{}) error {
+func ReadJSON(writer http.ResponseWriter, request *http.Request, data interface{}) error {
 	maxBytes := 1048576
 
 	request.Body = http.MaxBytesReader(writer, request.Body, int64(maxBytes))
@@ -30,7 +30,7 @@ func ReadJSON(app configs.AppConfiger, writer http.ResponseWriter, request *http
 	return nil
 }
 
-func WriteJSON(app configs.AppConfiger, writer http.ResponseWriter, status int, data interface{}, headers ...http.Header) error {
+func WriteJSON(writer http.ResponseWriter, status int, data interface{}, headers ...http.Header) error {
 	out, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {
 		return err
@@ -47,7 +47,7 @@ func WriteJSON(app configs.AppConfiger, writer http.ResponseWriter, status int, 
 	return nil
 }
 
-func BadRequest(app configs.AppConfiger, writer http.ResponseWriter, request *http.Request, err error) error {
+func BadRequest(writer http.ResponseWriter, request *http.Request, err error) error {
 	var payload JsonPayload
 
 	payload.Error = true
@@ -67,7 +67,7 @@ func InvalidCredentials(app configs.AppConfiger, writer http.ResponseWriter) err
 	payload.Error = true
 	payload.Message = "Invalid authentication credentials"
 
-	if err := WriteJSON(app, writer, http.StatusUnauthorized, payload); err != nil {
+	if err := WriteJSON(writer, http.StatusUnauthorized, payload); err != nil {
 		return err
 	}
 	return nil
