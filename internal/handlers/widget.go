@@ -2,12 +2,14 @@ package handlers
 
 import (
 	"fmt"
+	"net/http"
+	"strconv"
+	"time"
+
 	"github.com/alpden550/go-ecommerce-stripe/internal/helpers"
 	"github.com/alpden550/go-ecommerce-stripe/internal/models"
 	"github.com/alpden550/go-ecommerce-stripe/internal/renders"
 	"github.com/go-chi/chi/v5"
-	"net/http"
-	"strconv"
 )
 
 func WidgetChargeOnce(writer http.ResponseWriter, request *http.Request) {
@@ -86,10 +88,26 @@ func WidgetPaymentSucceed(writer http.ResponseWriter, request *http.Request) {
 		Quantity:      1,
 		Amount:        transactionData.Amount,
 	}
-	_, err = helpers.SaveWidgetOrder(app, order)
+	orderID, err := helpers.SaveWidgetOrder(app, order)
 	if err != nil {
 		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 		return
+	}
+
+	invoice := models.Invoice{
+		ID:        orderID,
+		Quantity:  order.Quantity,
+		Amount:    order.Amount,
+		Product:   "Widget",
+		FirstName: transactionData.FirstName,
+		LastName:  transactionData.LastName,
+		Email:     transactionData.Email,
+		CreatedAt: time.Now(),
+	}
+
+	err = invoice.SendInvoice()
+	if err != nil {
+		app.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 	}
 
 	app.Session.Put(request.Context(), "receipt", transactionData)
