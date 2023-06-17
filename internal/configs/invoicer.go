@@ -10,3 +10,15 @@ type InvoiceApplication struct {
 	ErrorLog *log.Logger
 	Version  string
 }
+
+func (i *InvoiceApplication) GetConfig() *Config {
+	return &i.Config
+}
+
+func (i *InvoiceApplication) GetInfoLog() *log.Logger {
+	return i.InfoLog
+}
+
+func (i *InvoiceApplication) GetErrorLog() *log.Logger {
+	return i.ErrorLog
+}
