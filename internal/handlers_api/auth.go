@@ -136,6 +136,7 @@ func SendPasswordResetEmail(writer http.ResponseWriter, request *http.Request) {
 		"Password Reset Requested",
 		"password-reset.plain.tmpl",
 		"password-reset.html.tmpl",
+		[]string{},
 		data,
 	); err != nil {
 		api.ErrorLog.Printf("%w", fmt.Errorf("%e", err))
