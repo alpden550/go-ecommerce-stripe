@@ -7,12 +7,12 @@ import (
 	"html/template"
 )
 
-//go:embed templates
+//go:embed templates/*
 var emailTemplateFS embed.FS
 
 func renderTemplate(tmpl string, data interface{}) (string, error) {
 	templateToRender := fmt.Sprintf("templates/%s", tmpl)
-	t, err := template.New("email-html").ParseFS(emailTemplateFS, templateToRender)
+	t, err := template.New("email").ParseFS(emailTemplateFS, templateToRender)
 	if err != nil {
 		return "", err
 	}
