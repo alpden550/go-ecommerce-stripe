@@ -16,3 +16,15 @@ type ApiApplication struct {
 func (api *ApiApplication) GetDB() models.DBModel {
 	return api.DB
 }
+
+func (api *ApiApplication) GetConfig() *Config {
+	return &api.Config
+}
+
+func (api *ApiApplication) GetInfoLog() *log.Logger {
+	return api.InfoLog
+}
+
+func (api *ApiApplication) GetErrorLog() *log.Logger {
+	return api.ErrorLog
+}
