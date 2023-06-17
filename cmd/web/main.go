@@ -38,8 +38,8 @@ func main() {
 
 	flag.IntVar(&config.Port, "port", 4000, "Server port to listen on")
 	flag.StringVar(&config.Env, "env", "development", "Application environment {development|production}")
-	flag.StringVar(&config.Api, "api", "http://localhost:4001", "URL to api")
-	flag.StringVar(&config.FrontEnd, "frontend", "http://localhost:4000", "URL to frontend")
+	flag.StringVar(&config.Api, "api", "http://0.0.0.0:4001", "URL to api")
+	flag.StringVar(&config.FrontEnd, "frontend", "http://0.0.0.0.:4000", "URL to frontend")
 	flag.Parse()
 
 	conn, err := prepare()
