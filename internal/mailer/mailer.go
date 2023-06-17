@@ -2,17 +2,21 @@ package mailer
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/alpden550/go-ecommerce-stripe/internal/configs"
 	mail "github.com/xhit/go-simple-mail/v2"
-	"time"
 )
 
-func serveSMTPClient(api *configs.ApiApplication) (*mail.SMTPClient, error) {
+func serveSMTPClient(configer configs.BaseConfiger) (*mail.SMTPClient, error) {
+	config := configer.GetConfig()
+	errorLog := configer.GetErrorLog()
+
 	mailer := mail.NewSMTPClient()
-	mailer.Host = api.Config.SMTP.Host
-	mailer.Port = api.Config.SMTP.Port
-	mailer.Username = api.Config.SMTP.Username
-	mailer.Password = api.Config.SMTP.Password
+	mailer.Host = config.SMTP.Host
+	mailer.Port = config.SMTP.Port
+	mailer.Username = config.SMTP.Username
+	mailer.Password = config.SMTP.Password
 	mailer.Encryption = mail.EncryptionTLS
 	mailer.KeepAlive = false
 	mailer.ConnectTimeout = 10 * time.Second
@@ -20,29 +24,39 @@ func serveSMTPClient(api *configs.ApiApplication) (*mail.SMTPClient, error) {
 
 	smtpClient, err := mailer.Connect()
 	if err != nil {
-		api.ErrorLog.Printf("%w", fmt.Errorf("%e", err))
+		errorLog.Printf("%w", fmt.Errorf("%e", err))
 		return nil, err
 	}
 
 	return smtpClient, nil
 }
 
-func SendEmail(api *configs.ApiApplication, from, to, subject, textTmpl, htmlTmpl string, data interface{}) error {
+func SendEmail(
+	configer configs.BaseConfiger,
+	from,
+	to,
+	subject,
+	textTmpl, htmlTmpl string,
+	attachments []string,
+	data interface{},
+) error {
+	errorLog := configer.GetErrorLog()
+
 	formattedMessage, err := renderTemplate(htmlTmpl, data)
 	if err != nil {
-		api.ErrorLog.Printf("%w", fmt.Errorf("%e", err))
+		errorLog.Printf("%w", fmt.Errorf("%e", err))
 		return err
 	}
 
 	plainMessage, err := renderTemplate(textTmpl, data)
 	if err != nil {
-		api.ErrorLog.Printf("%w", fmt.Errorf("%e", err))
+		errorLog.Printf("%w", fmt.Errorf("%e", err))
 		return err
 	}
 
-	smtp, err := serveSMTPClient(api)
+	smtp, err := serveSMTPClient(configer)
 	if err != nil {
-		api.ErrorLog.Printf("%w", fmt.Errorf("%e", err))
+		errorLog.Printf("%w", fmt.Errorf("%e", err))
 		return err
 	}
 
@@ -54,8 +68,14 @@ func SendEmail(api *configs.ApiApplication, from, to, subject, textTmpl, htmlTmp
 	email.SetBody(mail.TextHTML, formattedMessage)
 	email.AddAlternative(mail.TextPlain, plainMessage)
 
+	if len(attachments) > 0 {
+		for _, attachment := range attachments {
+			email.AddAttachment(attachment)
+		}
+	}
+
 	if err = email.Send(smtp); err != nil {
-		api.ErrorLog.Printf("%w", fmt.Errorf("%e", err))
+		errorLog.Printf("%w", fmt.Errorf("%e", err))
 		return err
 	}
 
