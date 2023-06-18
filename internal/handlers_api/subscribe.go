@@ -4,12 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
+	"strconv"
+	"time"
+
 	"github.com/alpden550/go-ecommerce-stripe/internal/cards"
 	"github.com/alpden550/go-ecommerce-stripe/internal/helpers"
 	"github.com/alpden550/go-ecommerce-stripe/internal/models"
 	"github.com/stripe/stripe-go/v74"
-	"net/http"
-	"strconv"
 )
 
 func Subscribe(w http.ResponseWriter, r *http.Request) {
@@ -78,10 +80,26 @@ func Subscribe(w http.ResponseWriter, r *http.Request) {
 			Quantity:       1,
 			Amount:         amount,
 		}
-		_, err = helpers.SaveSubscriptionOrder(api, order)
+		orderID, err := helpers.SaveSubscriptionOrder(api, order)
 		if err != nil {
 			api.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 			return
+		}
+
+		invoice := models.Invoice{
+			ID:        orderID,
+			Quantity:  order.Quantity,
+			Amount:    order.Amount,
+			Product:   "Subscription",
+			FirstName: payload.FirstName,
+			LastName:  payload.LastName,
+			Email:     payload.Email,
+			CreatedAt: time.Now(),
+		}
+
+		err = invoice.SendInvoice()
+		if err != nil {
+			api.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
 		}
 	}
 
