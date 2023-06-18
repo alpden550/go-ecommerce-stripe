@@ -19,7 +19,7 @@ type Invoice struct {
 }
 
 func (invoice *Invoice) SendInvoice() error {
-	url := "http://0.0.0.0:5001/invoice/send"
+	url := "http://localhost:5001/invoice/send"
 	out, err := json.MarshalIndent(invoice, "", "\t")
 	if err != nil {
 		return err

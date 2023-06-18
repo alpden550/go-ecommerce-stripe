@@ -5,6 +5,12 @@ import (
 	"encoding/gob"
 	"flag"
 	"fmt"
+	"html/template"
+	"log"
+	"net/http"
+	"os"
+	"time"
+
 	"github.com/alexedwards/scs/postgresstore"
 	"github.com/alexedwards/scs/v2"
 	"github.com/alpden550/go-ecommerce-stripe/internal/configs"
@@ -14,11 +20,6 @@ import (
 	"github.com/alpden550/go-ecommerce-stripe/internal/models"
 	"github.com/alpden550/go-ecommerce-stripe/internal/renders"
 	"github.com/joho/godotenv"
-	"html/template"
-	"log"
-	"net/http"
-	"os"
-	"time"
 )
 
 const version = "1.0.0"
@@ -38,8 +39,8 @@ func main() {
 
 	flag.IntVar(&config.Port, "port", 4000, "Server port to listen on")
 	flag.StringVar(&config.Env, "env", "development", "Application environment {development|production}")
-	flag.StringVar(&config.Api, "api", "http://0.0.0.0:4001", "URL to api")
-	flag.StringVar(&config.FrontEnd, "frontend", "http://0.0.0.0.:4000", "URL to frontend")
+	flag.StringVar(&config.Api, "api", "http://localhost:4001", "URL to api")
+	flag.StringVar(&config.FrontEnd, "frontend", "http://localhost:4000", "URL to frontend")
 	flag.Parse()
 
 	conn, err := prepare()
