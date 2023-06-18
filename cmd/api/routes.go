@@ -1,8 +1,9 @@
 package main
 
 import (
-	handlers "github.com/alpden550/go-ecommerce-stripe/internal/handlers_api"
 	"net/http"
+
+	handlers "github.com/alpden550/go-ecommerce-stripe/internal/handlers_api"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/cors"

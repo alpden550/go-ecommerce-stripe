@@ -1,9 +1,10 @@
 package main
 
 import (
+	"net/http"
+
 	handlers "github.com/alpden550/go-ecommerce-stripe/internal/handlers_api"
 	"github.com/alpden550/go-ecommerce-stripe/internal/helpers"
-	"net/http"
 )
 
 func MiddlewareAuth(next http.Handler) http.Handler {
