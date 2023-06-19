@@ -1,11 +1,12 @@
 package handlers_api
 
 import (
+	"net/http"
+	"strconv"
+
 	"github.com/alpden550/go-ecommerce-stripe/internal/helpers"
 	"github.com/alpden550/go-ecommerce-stripe/internal/models"
 	"github.com/go-chi/chi/v5"
-	"net/http"
-	"strconv"
 )
 
 var orderPayload struct {

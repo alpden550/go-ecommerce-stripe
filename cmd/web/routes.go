@@ -1,9 +1,10 @@
 package main
 
 import (
+	"net/http"
+
 	"github.com/alpden550/go-ecommerce-stripe/internal/handlers"
 	"github.com/go-chi/chi/v5"
-	"net/http"
 )
 
 func routes() http.Handler {

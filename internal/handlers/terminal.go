@@ -2,10 +2,11 @@ package handlers
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/alpden550/go-ecommerce-stripe/internal/helpers"
 	"github.com/alpden550/go-ecommerce-stripe/internal/models"
 	"github.com/alpden550/go-ecommerce-stripe/internal/renders"
-	"net/http"
 )
 
 func VirtualTerminal(writer http.ResponseWriter, request *http.Request) {

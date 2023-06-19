@@ -2,10 +2,11 @@ package handlers
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/alpden550/go-ecommerce-stripe/internal/encryption"
 	"github.com/alpden550/go-ecommerce-stripe/internal/renders"
 	"github.com/alpden550/go-ecommerce-stripe/internal/urlsigner"
-	"net/http"
 )
 
 func Login(writer http.ResponseWriter, request *http.Request) {

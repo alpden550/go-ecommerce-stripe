@@ -3,11 +3,12 @@ package handlers_api
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"strconv"
+
 	"github.com/alpden550/go-ecommerce-stripe/internal/cards"
 	"github.com/alpden550/go-ecommerce-stripe/internal/helpers"
 	"github.com/alpden550/go-ecommerce-stripe/internal/models"
-	"net/http"
-	"strconv"
 )
 
 func GetPaymentIntent(writer http.ResponseWriter, request *http.Request) {

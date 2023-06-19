@@ -1,8 +1,9 @@
 package configs
 
 import (
-	"github.com/alpden550/go-ecommerce-stripe/internal/models"
 	"log"
+
+	"github.com/alpden550/go-ecommerce-stripe/internal/models"
 )
 
 type AppConfiger interface {

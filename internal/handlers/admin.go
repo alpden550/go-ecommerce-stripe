@@ -2,8 +2,9 @@ package handlers
 
 import (
 	"fmt"
-	"github.com/alpden550/go-ecommerce-stripe/internal/renders"
 	"net/http"
+
+	"github.com/alpden550/go-ecommerce-stripe/internal/renders"
 )
 
 func AllSales(writer http.ResponseWriter, request *http.Request) {

@@ -2,8 +2,9 @@ package handlers
 
 import (
 	"fmt"
-	"github.com/gorilla/websocket"
 	"net/http"
+
+	"github.com/gorilla/websocket"
 )
 
 type WebSocketConnection struct {

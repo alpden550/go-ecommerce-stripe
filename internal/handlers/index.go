@@ -2,9 +2,10 @@ package handlers
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/alpden550/go-ecommerce-stripe/internal/configs"
 	"github.com/alpden550/go-ecommerce-stripe/internal/renders"
-	"net/http"
 )
 
 var app *configs.AppConfig

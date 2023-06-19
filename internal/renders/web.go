@@ -3,10 +3,11 @@ package renders
 import (
 	"embed"
 	"fmt"
-	"github.com/alpden550/go-ecommerce-stripe/internal/configs"
-	"github.com/alpden550/go-ecommerce-stripe/internal/helpers"
 	"html/template"
 	"net/http"
+
+	"github.com/alpden550/go-ecommerce-stripe/internal/configs"
+	"github.com/alpden550/go-ecommerce-stripe/internal/helpers"
 )
 
 var app *configs.AppConfig

@@ -1,10 +1,11 @@
 package configs
 
 import (
-	"github.com/alexedwards/scs/v2"
-	"github.com/alpden550/go-ecommerce-stripe/internal/models"
 	"html/template"
 	"log"
+
+	"github.com/alexedwards/scs/v2"
+	"github.com/alpden550/go-ecommerce-stripe/internal/models"
 )
 
 type AppConfig struct {

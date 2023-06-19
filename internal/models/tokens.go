@@ -7,8 +7,9 @@ import (
 	"encoding/base32"
 	"errors"
 	"fmt"
-	"golang.org/x/crypto/bcrypt"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 const (

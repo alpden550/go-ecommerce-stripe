@@ -2,12 +2,13 @@ package handlers_api
 
 import (
 	"fmt"
+	"net/http"
+	"strconv"
+
 	"github.com/alpden550/go-ecommerce-stripe/internal/helpers"
 	"github.com/alpden550/go-ecommerce-stripe/internal/models"
 	"github.com/go-chi/chi/v5"
 	"golang.org/x/crypto/bcrypt"
-	"net/http"
-	"strconv"
 )
 
 func AllUsers(writer http.ResponseWriter, request *http.Request) {

@@ -3,15 +3,16 @@ package handlers_api
 import (
 	"errors"
 	"fmt"
+	"net/http"
+	"strings"
+	"time"
+
 	"github.com/alpden550/go-ecommerce-stripe/internal/encryption"
 	"github.com/alpden550/go-ecommerce-stripe/internal/helpers"
 	"github.com/alpden550/go-ecommerce-stripe/internal/mailer"
 	"github.com/alpden550/go-ecommerce-stripe/internal/models"
 	"github.com/alpden550/go-ecommerce-stripe/internal/urlsigner"
 	"golang.org/x/crypto/bcrypt"
-	"net/http"
-	"strings"
-	"time"
 )
 
 func CreateAuthToken(writer http.ResponseWriter, request *http.Request) {

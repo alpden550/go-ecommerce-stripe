@@ -2,9 +2,10 @@ package urlsigner
 
 import (
 	"fmt"
-	goalone "github.com/bwmarrin/go-alone"
 	"strings"
 	"time"
+
+	goalone "github.com/bwmarrin/go-alone"
 )
 
 type Signer struct {

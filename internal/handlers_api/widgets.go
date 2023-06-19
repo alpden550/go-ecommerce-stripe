@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
+	"strconv"
+
 	"github.com/alpden550/go-ecommerce-stripe/internal/cards"
 	"github.com/alpden550/go-ecommerce-stripe/internal/helpers"
 	"github.com/go-chi/chi/v5"
-	"net/http"
-	"strconv"
 )
 
 func GetWidgetByID(writer http.ResponseWriter, request *http.Request) {
