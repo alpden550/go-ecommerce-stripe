@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/alpden550/go-ecommerce-stripe/internal/validators"
 	"net/http"
 	"strconv"
 	"time"
@@ -19,6 +20,14 @@ func Subscribe(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		api.ErrorLog.Printf("%e", fmt.Errorf("%w", err))
+		return
+	}
+
+	validator := validators.New()
+	validator.Check(len(payload.FirstName) > 2, "first_name", "Must be at least 3 characters")
+	validator.Check(len(payload.LastName) > 2, "last_name", "Must be at least 3 characters")
+	if !validator.Valid() {
+		helpers.FailedValidation(api, w, validator.Errors)
 		return
 	}
 
