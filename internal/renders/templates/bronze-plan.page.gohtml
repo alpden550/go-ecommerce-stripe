@@ -26,12 +26,14 @@
             <label for="first_name" class="form-label">First Name</label>
             <input type="text" class="form-control" id="first_name" name="first_name"
                    required="" autocomplete="first-name-new">
+            <div id="first_name_help" class="valid-feedback">Looks good!</div>
         </div>
 
         <div class="mb-3">
             <label for="last_name" class="form-label">Last Name</label>
             <input type="text" class="form-control" id="last_name" name="last_name"
                    required="" autocomplete="last-name-new">
+            <div id="last_name_help" class="valid-feedback">Looks good!</div>
         </div>
 
         <div class="mb-3">
@@ -161,7 +163,6 @@
                 fetch("{{.API}}/api/subscribe", requestOptions)
                     .then(response => response.json())
                     .then(function (data) {
-                        console.log(data)
                         if (data.ok) {
                             processing.classList.add("d-none");
                             showCardSuccess();
@@ -171,7 +172,14 @@
                             sessionStorage.last_four = result.paymentMethod.card.last4;
                             location.href = "/plans/bronze/receipt";
                         } else {
-                            showCardError("Invalid response from payment gateway!");
+                            document.getElementById("charge_form").classList.remove("was-validated");
+                            Object.entries(data.errors).forEach((i) => {
+                                const [key, value] = i;
+                                document.getElementById(key).classList.add("is-invalid");
+                                document.getElementById(key + "_help").classList.remove("valid-feedback");
+                                document.getElementById(key + "_help").classList.add("invalid-feedback");
+                                document.getElementById(key + "_help").innerText = value;
+                            })
                             showPayButtons();
                         }
                     })
